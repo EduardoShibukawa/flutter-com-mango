@@ -4,21 +4,9 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'remote_authentication_test.mocks.dart';
-
-class RemoteAuthentication {
-  HttpClient httpClient;
-  String url;
-
-  RemoteAuthentication({required this.httpClient, required this.url});
-
-  Future<void> auth() async {
-    await this.httpClient.request(url: url, method: 'post');
-  }
-}
-  
-abstract class HttpClient {
-  Future<void> request({required String url, required String method});
-}
+import 'package:clean_flutter/data/http/http.dart';
+import 'package:clean_flutter/data/usecase/usecase.dart';
+import 'package:clean_flutter/domain/usecases/usecases.dart';
 
 @GenerateMocks([HttpClient])
 void main() {
@@ -34,14 +22,19 @@ void main() {
   });
 
   test('Should call HttpClient with correct values', () async {
+    // Arrange
+    final params = AuthenticationParams(
+      email: faker.internet.email(),
+      secret: faker.internet.password(),
+    );
+
     // Act
-    await sut.auth();
+    await sut.auth(params);
 
     // Assert
-    verify(httpClient.request(
-      url: url,
-      method: 'post'
-      ));
+    verify(httpClient.request(url: url, method: 'post', body: {
+      'email': params.email,
+      'password': params.secret,
+    }));
   });
 }
-  
