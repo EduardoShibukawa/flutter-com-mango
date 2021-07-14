@@ -1,8 +1,8 @@
 import 'package:clean_flutter/data/http/http.dart';
 
-import 'package:clean_flutter/data/models/remote_account_model.dart';
-import 'package:clean_flutter/domain/entities/account_entity.dart';
-import 'package:clean_flutter/domain/helpers/domain_error.dart';
+import 'package:clean_flutter/data/models/models.dart';
+import 'package:clean_flutter/domain/entities/entities.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 
 class RemoteAuthentication {
