@@ -22,7 +22,10 @@ void main() {
           url: any(named: 'url'),
           method: any(named: 'method'),
           body: any(named: 'body'),
-        )).thenAnswer((_) async => {});
+        )).thenAnswer((_) async => {
+          'accessToken': faker.guid.guid(),
+          'name': faker.person.name(),
+        });
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
     params = AuthenticationParams(
@@ -70,8 +73,8 @@ void main() {
     // Assert
     expect(future, throwsA(DomainError.unexpected));
   });
-  
-    test('Should throw UnexpectedError if HttpClient returns 500', () async {
+
+  test('Should throw UnexpectedError if HttpClient returns 500', () async {
     // Arrange
     when(() => httpClient.request(
           url: any(named: 'url'),
@@ -86,7 +89,8 @@ void main() {
     expect(future, throwsA(DomainError.unexpected));
   });
 
-      test('Should throw InvalidCredentialsError if HttpClient returns 401', () async {
+  test('Should throw InvalidCredentialsError if HttpClient returns 401',
+      () async {
     // Arrange
     when(() => httpClient.request(
           url: any(named: 'url'),
@@ -99,5 +103,27 @@ void main() {
 
     // Assert
     expect(future, throwsA(DomainError.invalidCredentialsError));
+  });
+
+  test('Should return an Account if HttpClient returns 200',
+      () async {
+    // Arrange
+    final accessToken = faker.guid.guid();
+    final name = faker.person.name();
+
+    when(() => httpClient.request(
+          url: any(named: 'url'),
+          method: any(named: 'method'),
+          body: any(named: 'body'),
+        )).thenAnswer((_) async => {
+          'accessToken': accessToken,
+          'name': name,
+        });
+
+    // Act
+    final account = await sut.auth(params);
+
+    // Assert
+    expect(account.token, accessToken);
   });
 }
