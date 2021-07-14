@@ -21,9 +21,11 @@ class HttpAdapter implements HttpClient {
       'accept': 'application/json'
     };
     var jsonBody = body != null ? jsonEncode(body) : null;
-    final response = await client.post(Uri.parse(url), headers: headers, body: jsonBody);
+    final response =
+        await client.post(Uri.parse(url), headers: headers, body: jsonBody);
 
-    return jsonDecode(response.body);
+    print(response);
+    return response.body.isNotEmpty ? jsonDecode(response.body) : {};
   }
 }
 
@@ -38,15 +40,24 @@ void main() {
     client = ClientSpy();
     url = Uri.parse(faker.internet.httpUrl());
     sut = HttpAdapter(client);
-    when(() => client.post(url,
-        headers: any(
-          named: 'headers',
-        ),
-        body: any(named: 'body')))
-        .thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
   });
 
   group('When call post', () {
+    When mockRequest() => when(() => client.post(url,
+        headers: any(
+          named: 'headers',
+        ),
+        body: any(named: 'body')));
+
+    void mockResponse(int statusCode,
+        {String body = '{"any_key":"any_value"}'}) {
+      mockRequest().thenAnswer((_) async => Response(body, statusCode));
+    }
+
+    setUp(() {
+      mockResponse(200);
+    });
+
     test('should be called correct values', () async {
       await sut.request(
         url: url.toString(),
@@ -84,6 +95,14 @@ void main() {
               'accept': 'application/json'
             },
           ));
+    });
+
+    test('should return null if post returns 200 with no data', () async {
+      mockResponse(200, body: '');
+
+      final response = await sut.request(url: url.toString(), method: 'post');
+
+      expect(response, {});
     });
   });
 }
