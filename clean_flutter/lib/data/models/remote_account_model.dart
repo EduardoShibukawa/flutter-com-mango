@@ -1,5 +1,6 @@
 import 'package:clean_flutter/data/http/http.dart';
-import 'package:clean_flutter/domain/entities/entities.dart';
+
+import '../../domain/entities/entities.dart';
 
 class RemoteAccountModel {
   final String token;

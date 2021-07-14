@@ -1,4 +1,3 @@
-import 'package:clean_flutter/domain/helpers/domain_error.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -6,6 +5,7 @@ import 'package:test/test.dart';
 import 'package:clean_flutter/data/http/http.dart';
 import 'package:clean_flutter/data/usecase/usecase.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
+import 'package:clean_flutter/domain/helpers/domain_error.dart';
 
 class MockHttpClient extends Mock implements HttpClient {}
 

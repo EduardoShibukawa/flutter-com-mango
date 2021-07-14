@@ -1,5 +1,6 @@
-import 'package:clean_flutter/ui/components/components.dart';
 import 'package:flutter/material.dart';
+
+import '../components/components.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);

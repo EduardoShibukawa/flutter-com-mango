@@ -1,4 +1,4 @@
-import 'package:clean_flutter/domain/entities/account_entity.dart';
+import '../entities/account_entity.dart';
 
 abstract class Authentication {
   Future<AccountEntity> auth({
