@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 import 'package:clean_flutter/ui/pages/login_page.dart';
+import 'package:flutter/services.dart';
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
     final primaryColor = Color.fromRGBO(136, 14, 79, 1);
     final primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
     final primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
