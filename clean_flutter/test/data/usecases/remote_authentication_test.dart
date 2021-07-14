@@ -15,23 +15,35 @@ void main() {
   late String url;
   late AuthenticationParams params;
 
+  Map mockValidData() => {
+        'accessToken': faker.guid.guid(),
+        'name': faker.person.name(),
+      };
+
+  When mockRequest() => when(() => httpClient.request(
+        url: any(named: 'url'),
+        method: any(named: 'method'),
+        body: any(named: 'body'),
+      ));
+
+  void mockHttpData(Map data) {
+    mockRequest().thenAnswer((_) async => data);
+  }
+
+  void mockHttpError(HttpError error) {
+    mockRequest().thenThrow(error);
+  }
+
   setUp(() {
     // Arrange
     httpClient = MockHttpClient();
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenAnswer((_) async => {
-          'accessToken': faker.guid.guid(),
-          'name': faker.person.name(),
-        });
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
     params = AuthenticationParams(
       email: faker.internet.email(),
       secret: faker.internet.password(),
     );
+    mockHttpData(mockValidData());
   });
 
   test('Should call HttpClient with correct values', () async {
@@ -46,11 +58,7 @@ void main() {
   });
   test('Should throw UnexpectedError if HttpClient returns 400', () async {
     // Arrange
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenThrow(HttpError.badRequest);
+    mockHttpError(HttpError.badRequest);
 
     // Act
     final future = sut.auth(params);
@@ -61,11 +69,7 @@ void main() {
 
   test('Should throw UnexpectedError if HttpClient returns 404', () async {
     // Arrange
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenThrow(HttpError.notFound);
+    mockHttpError(HttpError.notFound);
 
     // Act
     final future = sut.auth(params);
@@ -76,11 +80,7 @@ void main() {
 
   test('Should throw UnexpectedError if HttpClient returns 500', () async {
     // Arrange
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenThrow(HttpError.serverError);
+    mockHttpError(HttpError.serverError);
 
     // Act
     final future = sut.auth(params);
@@ -92,11 +92,7 @@ void main() {
   test('Should throw InvalidCredentialsError if HttpClient returns 401',
       () async {
     // Arrange
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenThrow(HttpError.unauthorized);
+    mockHttpError(HttpError.unauthorized);
 
     // Act
     final future = sut.auth(params);
@@ -110,14 +106,10 @@ void main() {
     final accessToken = faker.guid.guid();
     final name = faker.person.name();
 
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenAnswer((_) async => {
-          'accessToken': accessToken,
-          'name': name,
-        });
+    mockHttpData({
+      'accessToken': accessToken,
+      'name': name,
+    });
 
     // Act
     final account = await sut.auth(params);
@@ -126,14 +118,13 @@ void main() {
     expect(account.token, accessToken);
   });
 
-    test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenAnswer((_) async => {
-          'invalid_key': 'invalid_value',
-        });
+  test(
+      'Should throw UnexpectedError if HttpClient returns 200 with invalid data',
+      () async {
+    // Arrange
+    mockHttpData({
+      'invalid_key': 'invalid_value',
+    });
 
     // Act
     final future = sut.auth(params);
