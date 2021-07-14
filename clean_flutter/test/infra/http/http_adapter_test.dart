@@ -24,8 +24,12 @@ class HttpAdapter implements HttpClient {
     final response =
         await client.post(Uri.parse(url), headers: headers, body: jsonBody);
 
-    print(response);
-    return response.body.isNotEmpty ? jsonDecode(response.body) : {};
+    if (response.statusCode == 200
+          && response.body.isNotEmpty) {
+      return jsonDecode(response.body);
+    }
+
+    return {};
   }
 }
 
@@ -96,9 +100,24 @@ void main() {
             },
           ));
     });
-
-    test('should return null if post returns 200 with no data', () async {
+    test('should return empty map if post returns 200 with no data', () async {
       mockResponse(200, body: '');
+
+      final response = await sut.request(url: url.toString(), method: 'post');
+
+      expect(response, {});
+    });
+
+    test('should return empty map if post returns 204', () async {
+      mockResponse(204, body: '');
+
+      final response = await sut.request(url: url.toString(), method: 'post');
+
+      expect(response, {});
+    });
+
+    test('should return empty map if post returns 204 with data', () async {
+      mockResponse(204);
 
       final response = await sut.request(url: url.toString(), method: 'post');
 
