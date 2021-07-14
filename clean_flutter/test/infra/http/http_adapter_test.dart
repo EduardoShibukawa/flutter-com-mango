@@ -22,7 +22,7 @@ void main() {
   group('shared', () {
     test('Should throw ServerError if invalid method is provided', () {
       final future = sut.request(url: url.toString(), method: 'invalid_method');
-      
+
       expect(future, throwsA(HttpError.serverError));
     });
   });
@@ -37,6 +37,10 @@ void main() {
     void mockResponse(int statusCode,
         {String body = '{"any_key":"any_value"}'}) {
       mockRequest().thenAnswer((_) async => Response(body, statusCode));
+    }
+
+    void mockError() {
+      mockRequest().thenThrow(Exception());
     }
 
     setUp(() {
@@ -152,6 +156,14 @@ void main() {
       final future = sut.request(url: url.toString(), method: 'post');
 
       expect(future, throwsA(HttpError.badRequest));
+    });
+
+        test('should return ServerError if post throws', () async {
+      mockError();
+
+      final future = sut.request(url: url.toString(), method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
     });
   });
 }
