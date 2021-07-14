@@ -105,8 +105,7 @@ void main() {
     expect(future, throwsA(DomainError.invalidCredentialsError));
   });
 
-  test('Should return an Account if HttpClient returns 200',
-      () async {
+  test('Should return an Account if HttpClient returns 200', () async {
     // Arrange
     final accessToken = faker.guid.guid();
     final name = faker.person.name();
