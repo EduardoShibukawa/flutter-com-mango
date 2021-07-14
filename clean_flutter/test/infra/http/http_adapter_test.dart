@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:faker/faker.dart';
 import 'package:http/http.dart';
@@ -11,13 +10,17 @@ class HttpAdapter {
 
   HttpAdapter(this.client);
 
-  Future<void> request(
-      {required String url, required String method, Map? body}) async {
+  Future<void> request({
+    required String url,
+    required String method,
+    Map? body,
+  }) async {
     final headers = {
       'content-type': 'application/json',
       'accept': 'application/json'
     };
-    await client.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
+    var jsonBody = body != null ? jsonEncode(body) : null;
+    await client.post(Uri.parse(url), headers: headers, body: jsonBody);
   }
 }
 
@@ -32,26 +35,37 @@ void main() {
     client = ClientSpy();
     url = Uri.parse(faker.internet.httpUrl());
     sut = HttpAdapter(client);
-
-    when(() => client.post(
-          url,
-          headers: any(
-            named: 'headers',
-          ),
-        )).thenAnswer((_) async => Response('{}', 200));
+    when(() => client.post(url,
+        headers: any(
+          named: 'headers',
+        ),
+        body: any(named: 'body'))).thenAnswer((_) async => Response('{}', 200));
   });
 
   group('When call post', () {
     test('should be called correct values', () async {
       await sut.request(
-          url: url.toString(), method: 'post', body: {'any_key': 'any+value'});
+        url: url.toString(),
+        method: 'post',
+        body: {'any_key': 'any_value'},
+      );
+
+      verify(() => client.post(url,
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json'
+          },
+          body: '{"any_key":"any_value"}'));
+    });
+
+    test('should be called without body', () async {
+      await sut.request(url: url.toString(), method: 'post');
 
       verify(() => client.post(
             url,
             headers: {
               'content-type': 'application/json',
-              'accept': 'app  lication/json',
-              'body': '{"any_key": "any_value"}',
+              'accept': 'application/json'
             },
           ));
     });
