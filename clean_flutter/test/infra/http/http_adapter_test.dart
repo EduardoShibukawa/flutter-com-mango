@@ -1,16 +1,17 @@
 import 'dart:convert';
 
+import 'package:clean_flutter/data/http/http_client.dart';
 import 'package:faker/faker.dart';
 import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-class HttpAdapter {
+class HttpAdapter implements HttpClient {
   final Client client;
 
   HttpAdapter(this.client);
 
-  Future<void> request({
+  Future<Map> request({
     required String url,
     required String method,
     Map? body,
@@ -20,7 +21,9 @@ class HttpAdapter {
       'accept': 'application/json'
     };
     var jsonBody = body != null ? jsonEncode(body) : null;
-    await client.post(Uri.parse(url), headers: headers, body: jsonBody);
+    final response = await client.post(Uri.parse(url), headers: headers, body: jsonBody);
+
+    return jsonDecode(response.body);
   }
 }
 
@@ -39,7 +42,8 @@ void main() {
         headers: any(
           named: 'headers',
         ),
-        body: any(named: 'body'))).thenAnswer((_) async => Response('{}', 200));
+        body: any(named: 'body')))
+        .thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
   });
 
   group('When call post', () {
@@ -59,6 +63,18 @@ void main() {
     });
 
     test('should be called without body', () async {
+      await sut.request(url: url.toString(), method: 'post');
+
+      verify(() => client.post(
+            url,
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json'
+            },
+          ));
+    });
+
+    test('should return data if post returns 200', () async {
       await sut.request(url: url.toString(), method: 'post');
 
       verify(() => client.post(
