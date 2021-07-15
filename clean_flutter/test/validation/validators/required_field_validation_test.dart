@@ -1,5 +1,7 @@
 import 'package:test/test.dart';
 
+import 'package:clean_flutter/validation/validators/validators.dart';
+
 void main() {
   late RequiredFieldValidation sut;
 
@@ -18,20 +20,4 @@ void main() {
   test('should return error if value is null', () {
     expect(sut.validate(null), 'Campo obrigatório!');
   });
-}
-
-abstract class FIeldValidation {
-  String get field;
-  String validate(String value);
-}
-
-class RequiredFieldValidation implements FIeldValidation {
-  final String field;
-
-  RequiredFieldValidation(this.field);
-
-  @override
-  String validate(String? value) {
-    return value?.isNotEmpty == true ? '' : 'Campo obrigatório!';
-  }
 }
