@@ -25,7 +25,6 @@ void main() {
 
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
-
     when(() => presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
     when(() => presenter.passwordErrorStream)
@@ -36,6 +35,7 @@ void main() {
         .thenAnswer((_) => isFormValidController.stream);
     when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
+    when(() => presenter.auth()).thenAnswer((_) => Future.value());
     final loginPage = MaterialApp(home: LoginPage(presenter));
     await tester.pumpWidget(loginPage);
   }
