@@ -77,7 +77,13 @@ class StreamLoginPresenter {
     }
   }
 
+  void dispose() {
+    _controller.close();
+  }
+
   void _update() {
-    _controller.add(_state);
+    if (!_controller.isClosed) {
+      _controller.add(_state);
+    }
   }
 }
