@@ -1,7 +1,7 @@
-import 'package:clean_flutter/ui/pages/login/login_presenter.dart';
-import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:flutter/material.dart';
 
+import 'login_presenter.dart';
+import '../pages.dart';
 import '../../components/components.dart';
 
 class LoginPage extends StatefulWidget {
@@ -30,15 +30,7 @@ class _LoginPageState extends State<LoginPage> {
           });
 
           widget.presenter!.mainErrorStream.listen((error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.red[900],
-                content: Text(
-                  error,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            );
+            showErrorMessage(context, error);
           });
 
           return SingleChildScrollView(
