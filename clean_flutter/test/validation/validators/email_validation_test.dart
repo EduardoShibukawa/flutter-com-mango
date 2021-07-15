@@ -2,15 +2,17 @@ import 'package:clean_flutter/validation/validators/protocols/protocols.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('Should return blank if email is empty', () {
-    final sut = EmailValidation('any_field');
+  late EmailValidation sut;
 
+  setUp(() {
+    sut = EmailValidation('any_field');
+  });
+
+  test('Should return blank if email is empty', () {
     expect(sut.validate(''), '');
   });
 
   test('Should return blank if email is empty', () {
-    final sut = EmailValidation('any_field');
-
     expect(sut.validate(null), '');
   });
 }
