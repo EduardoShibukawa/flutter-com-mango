@@ -17,7 +17,7 @@ void main() {
     presenter = LoginPresenterSpy();
     emailErrorController = StreamController<String>();
     when(() => presenter.emailErrorStream)
-      .thenAnswer((_) => emailErrorController.stream);
+        .thenAnswer((_) => emailErrorController.stream);
     final loginPage = MaterialApp(home: LoginPage(presenter));
     await tester.pumpWidget(loginPage);
   }
@@ -30,29 +30,8 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    final emailTextChildren = find.descendant(
-      of: find.bySemanticsLabel('Email'),
-      matching: find.byType(Text),
-    );
-
-    expect(
-      emailTextChildren,
-      findsOneWidget,
-      reason:
-          'when a TextFormField has only one text child means it has no errors, since one of the childs is always the label text',
-    );
-
-    final passwordTextChildren = find.descendant(
-      of: find.bySemanticsLabel('Senha'),
-      matching: find.byType(Text),
-    );
-
-    expect(
-      passwordTextChildren,
-      findsOneWidget,
-      reason:
-          'when a TextFormField has only one text child means it has no errors, since one of the childs is always the label text',
-    );
+    expectNoErrosInTextField('Email');
+    expectNoErrosInTextField('Senha');
 
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
 
@@ -82,4 +61,29 @@ void main() {
 
     expect(find.text('any error'), findsOneWidget);
   });
+
+  testWidgets('should present no error if email is valid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    emailErrorController.add('');
+
+    await tester.pump();
+
+    expectNoErrosInTextField('Email');
+  });
+}
+
+void expectNoErrosInTextField(String field) {
+  final textChildren = find.descendant(
+    of: find.bySemanticsLabel(field),
+    matching: find.byType(Text),
+  );
+
+  expect(
+    textChildren,
+    findsOneWidget,
+    reason:
+        'when a TextFormField has only one text child means it has no errors, since one of the childs is always the label text',
+  );
 }
