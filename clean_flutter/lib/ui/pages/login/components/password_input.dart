@@ -1,6 +1,7 @@
-import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../pages.dart';
 
 class PasswordInput extends StatelessWidget {
   @override
