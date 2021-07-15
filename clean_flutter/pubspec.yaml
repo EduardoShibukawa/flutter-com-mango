@@ -1,7 +1,7 @@
 name: clean_flutter
 description: A new Flutter project.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
@@ -12,16 +12,16 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  http:
+  provider:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons:  
+  flutter_launcher_icons:
   test:
   mocktail:
   faker:
-  build_runner: ^1.11.0
-  http:
 
 flutter:
   uses-material-design: true
@@ -29,12 +29,9 @@ flutter:
     - lib/ui/assets/
 
 flutter_icons:
-  ios:  true
+  ios: true
   android: true
   image_path_android: lib/ui/assets/icons/android.png
   image_path_ios: lib/ui/assets/icons/ios.png
   adaptive_icon_background: lib/ui/assets/icons/background.png
   adaptive_icon_foreground: lib/ui/assets/icons/foreground.png
-
-  
-
