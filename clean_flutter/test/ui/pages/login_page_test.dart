@@ -74,7 +74,7 @@ void main() {
     verify(() => presenter.validatePassword(senha));
   });
 
-  testWidgets('should present error if email is invalid',
+  testWidgets('Should present error if email is invalid',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -84,7 +84,7 @@ void main() {
     expect(find.text('any error'), findsOneWidget);
   });
 
-  testWidgets('should present no error if email is valid',
+  testWidgets('Should present no error if email is valid',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -94,7 +94,7 @@ void main() {
     expectNoErrosInTextField('Email');
   });
 
-  testWidgets('should present error if password is invalid',
+  testWidgets('Should present error if password is invalid',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -104,7 +104,7 @@ void main() {
     expect(find.text('any error'), findsOneWidget);
   });
 
-  testWidgets('should present no error if email is valid',
+  testWidgets('Should present no error if email is valid',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -114,7 +114,7 @@ void main() {
     expectNoErrosInTextField('Senha');
   });
 
-  testWidgets('should enable button if form is valid',
+  testWidgets('Should enable button if form is valid',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -126,7 +126,7 @@ void main() {
     expect(button.onPressed, isNotNull);
   });
 
-  testWidgets('should disable button if form is not valid',
+  testWidgets('Should disable button if form is not valid',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -138,7 +138,7 @@ void main() {
     expect(button.onPressed, null);
   });
 
-  testWidgets('should call authentication on form submit',
+  testWidgets('Should call authentication on form submit',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -151,7 +151,7 @@ void main() {
     verify(() => presenter.auth()).called(1);
   });
 
-  testWidgets('should present loading', (WidgetTester tester) async {
+  testWidgets('Should present loading', (WidgetTester tester) async {
     await loadPage(tester);
 
     isLoadingController.add(true);
@@ -160,7 +160,7 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
-  testWidgets('should hide loading', (WidgetTester tester) async {
+  testWidgets('Should hide loading', (WidgetTester tester) async {
     await loadPage(tester);
 
     isLoadingController.add(true);
@@ -172,7 +172,7 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
-  testWidgets('should present error message if authentication fails',
+  testWidgets('Should present error message if authentication fails',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -180,6 +180,12 @@ void main() {
     await tester.pump();
 
     expect(find.text('main error'), findsOneWidget);
+  });
+
+  testWidgets('Should close streams on dispose', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    addTearDown(() {});
   });
 }
 
