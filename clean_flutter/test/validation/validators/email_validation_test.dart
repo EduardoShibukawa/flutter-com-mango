@@ -15,6 +15,10 @@ void main() {
   test('Should return blank if email is empty', () {
     expect(sut.validate(null), '');
   });
+
+  test('Should return blank if email is valid', () {
+    expect(sut.validate('eduardoshibuka@gmail.com'), '');
+  });
 }
 
 class EmailValidation implements FIeldValidation {
