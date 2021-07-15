@@ -53,17 +53,12 @@ class StreamLoginPresenter {
   }
 
   Future<void> auth() async {
-    var authenticationParams = AuthenticationParams(
-      email: _state.email,
-      secret: _state.password,
+    await authentication.auth(
+      params: AuthenticationParams(
+        email: _state.email,
+        secret: _state.password,
+      ),
     );
-
-    final AccountEntity accountEntity = await authentication.auth(
-      params: authenticationParams,
-    );
-
-    print('teste');
-    print(accountEntity);
   }
 
   void _update() {
