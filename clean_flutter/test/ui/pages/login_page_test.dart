@@ -88,6 +88,17 @@ void main() {
 
     expect(find.text('any error'), findsOneWidget);
   });
+
+  testWidgets('should present no error if email is valid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    emailErrorController.add('');
+
+    await tester.pump();
+
+    expectNoErrosInTextField('Senha');
+  });
 }
 
 void expectNoErrosInTextField(String field) {
