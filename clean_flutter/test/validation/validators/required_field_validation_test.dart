@@ -1,20 +1,18 @@
 import 'package:test/test.dart';
 
 void main() {
+  late RequiredFieldValidation sut;
+
+  setUp(() {
+    sut = RequiredFieldValidation('any_field');
+  });
+
   test('should return empty error if value is not empty', () {
-    final sut = RequiredFieldValidation('any_field');
-
-    final error = sut.validate('any_value');
-
-    expect(error, '');
+    expect(sut.validate('any_value'), '');
   });
 
   test('should return error if value is empty', () {
-    final sut = RequiredFieldValidation('any_field');
-
-    final error = sut.validate('');
-
-    expect(error, 'Campo obrigatório!');
+    expect(sut.validate(''), 'Campo obrigatório!');
   });
 }
 
