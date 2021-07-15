@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:clean_flutter/domain/entities/entities.dart';
-
 import 'protocols/protocols.dart';
 import '../../domain/usecases/usecases.dart';
+import '../../domain/helpers/helpers.dart';
 
 class LoginState {
   String email = '';
   String password = '';
   String emailError = '';
   String passwordError = '';
+  String mainError = '';
   bool isLoading = false;
 
   bool get isFormValid =>
@@ -31,6 +31,9 @@ class StreamLoginPresenter {
 
   Stream<String> get emailErrorStream =>
       _controller.stream.map((state) => state.emailError).distinct();
+
+  Stream<String> get mainErrorStream =>
+      _controller.stream.map((state) => state.mainError).distinct();
 
   Stream<bool> get isFormValidStream =>
       _controller.stream.map((state) => state.isFormValid).distinct();
@@ -59,14 +62,19 @@ class StreamLoginPresenter {
   Future<void> auth() async {
     _state.isLoading = true;
     _update();
-    await authentication.auth(
-      params: AuthenticationParams(
-        email: _state.email,
-        secret: _state.password,
-      ),
-    );
-    _update();
-    _state.isLoading = false;
+    try {
+      await authentication.auth(
+        params: AuthenticationParams(
+          email: _state.email,
+          secret: _state.password,
+        ),
+      );
+    } on DomainError catch (error) {
+      _state.mainError = error.description;
+    } finally {
+      _update();
+      _state.isLoading = false;
+    }
   }
 
   void _update() {

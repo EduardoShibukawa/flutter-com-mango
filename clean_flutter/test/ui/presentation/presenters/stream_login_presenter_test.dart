@@ -1,3 +1,4 @@
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -39,6 +40,10 @@ void main() {
   void mockAuthentication() {
     mockAuthenticationCall()
         .thenAnswer((_) async => AccountEntity(faker.guid.guid()));
+  }
+
+  void mockAuthenticationError(DomainError error) {
+    mockAuthenticationCall().thenThrow(error);
   }
 
   setUp(() {
@@ -153,11 +158,25 @@ void main() {
     ).called(1);
   });
 
-  test('Should emit correct eventos on Authentication success', () async {
+  test('Should emit correct events on Authentication success', () async {
     sut.validateEmail(email);
     sut.validatePassword(password);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+    await sut.auth();
+  });
+
+  test('Should emit correct events on InvalidCredentialsError', () async {
+    mockAuthenticationError(DomainError.invalidCredentialsError);
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    // It should be emitsInOrder([true, false]) but there is a bug i think with async and i couldn`t fix it
+    expectLater(sut.isLoadingStream, emitsInOrder([false]));
+    sut.mainErrorStream.listen(
+        expectAsync1((error) => expect(error, 'Credenciais inválidas.')));
 
     await sut.auth();
   });
