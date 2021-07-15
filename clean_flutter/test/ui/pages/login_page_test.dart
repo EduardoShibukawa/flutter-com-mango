@@ -128,7 +128,7 @@ void main() {
 
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
 
-    expect(button.onPressed, isNotNull);
+    expect(button.onPressed, null);
   });
 }
 
