@@ -66,7 +66,6 @@ void main() {
     await loadPage(tester);
 
     emailErrorController.add('any error');
-
     await tester.pump();
 
     expect(find.text('any error'), findsOneWidget);
@@ -77,7 +76,6 @@ void main() {
     await loadPage(tester);
 
     emailErrorController.add('');
-
     await tester.pump();
 
     expectNoErrosInTextField('Email');
@@ -88,7 +86,6 @@ void main() {
     await loadPage(tester);
 
     passwordErrorController.add('any error');
-
     await tester.pump();
 
     expect(find.text('any error'), findsOneWidget);
@@ -99,7 +96,6 @@ void main() {
     await loadPage(tester);
 
     emailErrorController.add('');
-
     await tester.pump();
 
     expectNoErrosInTextField('Senha');
@@ -110,7 +106,6 @@ void main() {
     await loadPage(tester);
 
     isFormValidController.add(true);
-
     await tester.pump();
 
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
@@ -118,17 +113,29 @@ void main() {
     expect(button.onPressed, isNotNull);
   });
 
-    testWidgets('should disable button if form is not valid',
+  testWidgets('should disable button if form is not valid',
       (WidgetTester tester) async {
     await loadPage(tester);
 
     isFormValidController.add(false);
-
     await tester.pump();
 
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
 
     expect(button.onPressed, null);
+  });
+
+  testWidgets('should call authentication on form submit',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+    await tester.pump();
+
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+
+    verify(() => presenter.auth()).called(1);
   });
 }
 
