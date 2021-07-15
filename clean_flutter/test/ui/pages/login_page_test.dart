@@ -67,11 +67,11 @@ void main() {
 
     final email = faker.internet.email();
     await tester.enterText(find.bySemanticsLabel('Email'), email);
-    verify(() => presenter.validateEmail(email));
+    verify(() => presenter.validateEmail(email)).called(1);
 
     final senha = faker.internet.password();
     await tester.enterText(find.bySemanticsLabel('Senha'), senha);
-    verify(() => presenter.validatePassword(senha));
+    verify(() => presenter.validatePassword(senha)).called(1);
   });
 
   testWidgets('Should present error if email is invalid',
@@ -185,7 +185,9 @@ void main() {
   testWidgets('Should close streams on dispose', (WidgetTester tester) async {
     await loadPage(tester);
 
-    addTearDown(() {});
+    addTearDown(() {
+      verify(() => presenter.dispose()).called(1);
+    });
   });
 }
 
