@@ -47,4 +47,16 @@ void main() {
     sut.validaEmail(email);
     sut.validaEmail(email);
   });
+
+  test('Should emit blank if validation succeeds', () {
+    sut.emailErrorStream.listen(expectAsync1(
+      (error) => expect(error, ''),
+    ));
+    sut.isFormValidStream.listen(expectAsync1(
+      (isValid) => expect(isValid, false),
+    ));
+
+    sut.validaEmail(email);
+    sut.validaEmail(email);
+  });
 }
