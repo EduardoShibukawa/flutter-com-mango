@@ -1,4 +1,4 @@
-import 'protocols/protocols.dart';
+import '../protocols/protocols.dart';
 
 class RequiredFieldValidation implements FIeldValidation {
   final String field;
