@@ -1,8 +1,8 @@
-import 'package:clean_flutter/domain/entities/account_entity.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_flutter/domain/entities/account_entity.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:clean_flutter/presentation/presents/protocols/protocols.dart';
 import 'package:clean_flutter/presentation/presents/presents.dart';
@@ -11,12 +11,18 @@ class ValidationSpy extends Mock implements Validation {}
 
 class AuthenticationSpy extends Mock implements Authentication {}
 
+class FakeAuthenticationParams extends Fake implements AuthenticationParams {}
+
 void main() {
   late StreamLoginPresenter sut;
   late Validation validation;
   late Authentication authentication;
   late String email;
   late String password;
+
+  setUpAll(() {
+    registerFallbackValue(FakeAuthenticationParams());
+  });
 
   When mockValidationCall({String? field}) => when(() => validation.validate(
         field: field ?? any(named: 'field'),
@@ -27,6 +33,14 @@ void main() {
     mockValidationCall(field: field).thenReturn(value ?? '');
   }
 
+  When mockAuthenticationCall() =>
+      when(() => authentication.auth(params: any(named: 'params')));
+
+  void mockAuthentication() {
+    mockAuthenticationCall()
+        .thenAnswer((_) async => AccountEntity(faker.guid.guid()));
+  }
+
   setUp(() {
     validation = ValidationSpy();
     authentication = AuthenticationSpy();
@@ -35,6 +49,7 @@ void main() {
     email = faker.internet.email();
     password = faker.internet.password();
     mockValidation();
+    mockAuthentication();
   });
 
   test('Should call Validation with correct email', () {
@@ -123,14 +138,6 @@ void main() {
   });
 
   test('Should call Authentication with correct values', () async {
-    final params = AuthenticationParams(
-      email: email,
-      secret: password,
-    );
-
-    when(() => authentication.auth(params: params))
-        .thenAnswer((_) => Future.value(AccountEntity('token')));
-
     sut.validateEmail(email);
     sut.validatePassword(password);
 
@@ -138,8 +145,20 @@ void main() {
 
     verify(
       () => authentication.auth(
-        params: params,
+        params: AuthenticationParams(
+          email: email,
+          secret: password,
+        ),
       ),
     ).called(1);
+  });
+
+  test('Should emit correct eventos on Authentication success', () async {
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+    await sut.auth();
   });
 }
