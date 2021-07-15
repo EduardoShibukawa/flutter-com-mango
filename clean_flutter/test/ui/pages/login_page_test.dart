@@ -50,12 +50,14 @@ void main() {
 
     testWidgets('Should call validate with correct values',
       (WidgetTester tester) async {
-    await loadPage(tester);
-    
+    await loadPage(tester);    
+
     final email = faker.internet.email();
-
     await tester.enterText(find.bySemanticsLabel('Email'), email);
-
     verify(() => presenter.validateEmail(email));
+
+    final senha = faker.internet.password();
+    await tester.enterText(find.bySemanticsLabel('Senha'), senha);
+    verify(() => presenter.validatePassword(senha));
   });
 }
