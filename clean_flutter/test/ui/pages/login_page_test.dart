@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:clean_flutter/ui/pages/pages.dart';
+import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
@@ -13,14 +14,16 @@ void main() {
   late LoginPresenter presenter;
   late StreamController<String> emailErrorController;
   late StreamController<String> passwordErrorController;
-  late StreamController<String> mmainErrorController;
+  late StreamController<String> mainErrorController;
+  late StreamController<String> navigateToController;
   late StreamController<bool> isFormValidController;
   late StreamController<bool> isLoadingController;
 
   void initStreams() {
     emailErrorController = StreamController<String>();
     passwordErrorController = StreamController<String>();
-    mmainErrorController = StreamController<String>();
+    mainErrorController = StreamController<String>();
+    navigateToController = StreamController<String>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
   }
@@ -28,7 +31,8 @@ void main() {
   void closeStreams() {
     emailErrorController.close();
     passwordErrorController.close();
-    mmainErrorController.close();
+    mainErrorController.close();
+    navigateToController.close();
     isFormValidController.close();
     isLoadingController.close();
   }
@@ -39,7 +43,9 @@ void main() {
     when(() => presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
     when(() => presenter.mainErrorStream)
-        .thenAnswer((_) => mmainErrorController.stream);
+        .thenAnswer((_) => mainErrorController.stream);
+    when(() => presenter.navigateToStream)
+        .thenAnswer((_) => navigateToController.stream);
     when(() => presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
     when(() => presenter.isLoadingStream)
@@ -54,7 +60,21 @@ void main() {
 
     when(() => presenter.auth()).thenAnswer((_) => Future.value());
 
-    final loginPage = MaterialApp(home: LoginPage(presenter));
+    final loginPage = GetMaterialApp(
+      initialRoute: '/login',
+      getPages: [
+        GetPage(
+          name: '/login',
+          page: () => LoginPage(presenter),
+        ),
+        GetPage(
+          name: '/any_route',
+          page: () => Scaffold(
+            body: Text('fake page'),
+          ),
+        ),
+      ],
+    );
     await tester.pumpWidget(loginPage);
   }
 
@@ -190,18 +210,20 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    mmainErrorController.add('main error');
+    mainErrorController.add('main error');
     await tester.pump();
 
     expect(find.text('main error'), findsOneWidget);
   });
 
-  testWidgets('Should close streams on dispose', (WidgetTester tester) async {
+  testWidgets('Should change page', (WidgetTester tester) async {
     await loadPage(tester);
 
-    addTearDown(() {
-      verify(() => presenter.dispose()).called(1);
-    });
+    navigateToController.add('/any_route');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/any_route');
+    expect(find.text('fake page'), findsOneWidget);
   });
 }
 

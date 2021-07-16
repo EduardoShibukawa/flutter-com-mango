@@ -88,4 +88,7 @@ class StreamLoginPresenter implements LoginPresenter {
       _controller.add(_state);
     }
   }
+
+  @override
+  Stream<String> get navigateToStream => throw UnimplementedError();
 }
