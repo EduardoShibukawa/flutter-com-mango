@@ -1,6 +1,6 @@
 import 'package:clean_flutter/validation/protocols/protocols.dart';
 
-class EmailValidation implements FIeldValidation {
+class EmailValidation implements FieldValidation {
   final String field;
 
   EmailValidation(this.field);
