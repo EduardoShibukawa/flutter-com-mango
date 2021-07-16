@@ -1,4 +1,3 @@
-import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
