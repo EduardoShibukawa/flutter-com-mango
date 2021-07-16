@@ -6,10 +6,10 @@ import '../../pages.dart';
 class PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final presenter = Provider.of<LoginPresenter?>(context);
+    final presenter = Provider.of<LoginPresenter>(context);
 
     return StreamBuilder<String>(
-        stream: presenter!.passwordErrorStream,
+        stream: presenter.passwordErrorStream,
         builder: (context, snapshot) {
           return TextFormField(
             decoration: InputDecoration(
