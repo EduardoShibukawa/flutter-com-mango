@@ -1,6 +1,6 @@
 import '../protocols/protocols.dart';
 
-class RequiredFieldValidation implements FIeldValidation {
+class RequiredFieldValidation implements FieldValidation {
   final String field;
 
   RequiredFieldValidation(this.field);

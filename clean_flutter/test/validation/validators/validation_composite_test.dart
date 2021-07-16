@@ -4,24 +4,24 @@ import 'package:test/test.dart';
 import 'package:clean_flutter/presentation/presents/protocols/protocols.dart';
 import 'package:clean_flutter/validation/protocols/protocols.dart';
 
-class FieldValidationSpy extends Mock implements FIeldValidation {}
+class FieldValidationSpy extends Mock implements FieldValidation {}
 
 void main() {
   late ValidationComposite sut;
-  late FIeldValidation validation1;
-  late FIeldValidation validation2;
-  late FIeldValidation validation3;
+  late FieldValidation validation1;
+  late FieldValidation validation2;
+  late FieldValidation validation3;
 
   mockValidation1(String error) {
-    when(() => validation1.field).thenReturn('');
+    when(() => validation1.validate(any())).thenReturn(error);
   }
 
   mockValidation2(String error) {
-    when(() => validation2.field).thenReturn('');
+    when(() => validation2.validate(any())).thenReturn(error);
   }
 
   mockValidation3(String error) {
-    when(() => validation3.field).thenReturn('');
+    when(() => validation3.validate(any())).thenReturn(error);
   }
 
   setUp(() {
@@ -56,7 +56,7 @@ void main() {
 }
 
 class ValidationComposite implements Validation {
-  final List<FIeldValidation> validations;
+  final List<FieldValidation> validations;
 
   ValidationComposite(this.validations);
 
