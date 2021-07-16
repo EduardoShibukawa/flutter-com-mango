@@ -35,41 +35,52 @@ class _LoginPageState extends State<LoginPage> {
             showErrorMessage(context, error);
           });
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                LoginHeader(),
-                HeadLine1(text: 'Login'),
-                Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Provider<LoginPresenter?>(
-                    create: (_) => widget.presenter,
-                    child: Form(
-                      child: Column(
-                        children: [
-                          EmailInput(),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(top: 8.0, bottom: 32.0),
-                            child: PasswordInput(),
-                          ),
-                          LoginButton(),
-                          TextButton.icon(
-                            onPressed: () {},
-                            icon: Icon(Icons.person),
-                            label: Text('Criar Conta'),
-                          ),
-                        ],
+          return GestureDetector(
+            onTap: _hideKeyboard,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  LoginHeader(),
+                  HeadLine1(text: 'Login'),
+                  Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Provider<LoginPresenter?>(
+                      create: (_) => widget.presenter,
+                      child: Form(
+                        child: Column(
+                          children: [
+                            EmailInput(),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 8.0, bottom: 32.0),
+                              child: PasswordInput(),
+                            ),
+                            LoginButton(),
+                            TextButton.icon(
+                              onPressed: () {},
+                              icon: Icon(Icons.person),
+                              label: Text('Criar Conta'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           );
         },
       ),
     );
+  }
+
+  void _hideKeyboard() {
+    final currentFocus = FocusScope.of(context);
+
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
   }
 }
