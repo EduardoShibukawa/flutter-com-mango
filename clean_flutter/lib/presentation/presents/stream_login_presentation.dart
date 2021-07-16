@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:clean_flutter/ui/pages/pages.dart';
+
 import 'protocols/protocols.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../domain/helpers/helpers.dart';
@@ -19,7 +21,7 @@ class LoginState {
       email.isNotEmpty;
 }
 
-class StreamLoginPresenter {
+class StreamLoginPresenter implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
   final _controller = StreamController<LoginState>.broadcast();

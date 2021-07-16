@@ -13,8 +13,9 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   http:
-  provider:
   equatable:
+  provider:
+  get:
 
 dev_dependencies:
   flutter_test:
