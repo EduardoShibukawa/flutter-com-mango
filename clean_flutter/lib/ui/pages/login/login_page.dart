@@ -7,7 +7,7 @@ import '../pages.dart';
 import '../../components/components.dart';
 
 class LoginPage extends StatefulWidget {
-  final LoginPresenter? presenter;
+  final LoginPresenter presenter;
 
   LoginPage(this.presenter);
 
@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void dispose() {
     super.dispose();
-    widget.presenter!.dispose();
+    widget.presenter.dispose();
   }
 
   @override
@@ -27,11 +27,11 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          widget.presenter!.isLoadingStream.listen((isLoading) {
+          widget.presenter.isLoadingStream.listen((isLoading) {
             isLoading ? showLoading(context) : hideLoading(context);
           });
 
-          widget.presenter!.mainErrorStream.listen((error) {
+          widget.presenter.mainErrorStream.listen((error) {
             showErrorMessage(context, error);
           });
 
