@@ -5,10 +5,6 @@ class ValidationBuilder {
   late String fieldName;
   List<FieldValidation> validations = [];
 
-  ValidationBuilder() {
-    throw Exception('public constructor not allowed for builders');
-  }
-
   ValidationBuilder._(this.fieldName);
 
   static ValidationBuilder field(String fieldName) {
