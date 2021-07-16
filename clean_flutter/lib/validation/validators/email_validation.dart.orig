@@ -1,0 +1,25 @@
+import 'package:clean_flutter/validation/protocols/protocols.dart';
+import 'package:equatable/equatable.dart';
+
+<<<<<<< HEAD
+class EmailValidation extends Equatable implements FieldValidation {
+=======
+class EmailValidation implements FieldValidation {
+>>>>>>> 29075a64a9b8c3183a17626337efc62185022860
+  final String field;
+
+  List<Object?> get props => [field];
+
+  EmailValidation(this.field);
+
+  String validate(String? value) {
+    final regex = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+    if (value?.isNotEmpty == true && !regex.hasMatch(value!)) {
+      return 'Campo inválido!';
+    }
+
+    return '';
+  }
+}
