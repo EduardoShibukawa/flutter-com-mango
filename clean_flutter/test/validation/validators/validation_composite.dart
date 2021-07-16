@@ -30,9 +30,9 @@ void main() {
     validation3 = FieldValidationSpy();
     sut = ValidationComposite([validation1, validation2, validation3]);
 
-    when(() => validation1.field).thenReturn('any_field');
+    when(() => validation1.field).thenReturn('other_field');
     when(() => validation2.field).thenReturn('any_field');
-    when(() => validation3.field).thenReturn('other_field');
+    when(() => validation3.field).thenReturn('any_field');
     mockValidation1('');
     mockValidation2('');
     mockValidation3('');
@@ -44,14 +44,14 @@ void main() {
     expect(error, '');
   });
 
-  test('Should return the first error', () {
+  test('Should return the first error found', () {
     mockValidation1('error_1');
     mockValidation2('error_2');
     mockValidation3('error_3');
 
     final error = sut.validate(field: 'any_field', value: 'any_value');
 
-    expect(error, 'error_1');
+    expect(error, 'error_2');
   });
 }
 
@@ -61,7 +61,7 @@ class ValidationComposite implements Validation {
   ValidationComposite(this.validations);
 
   String validate({required String field, required String value}) {
-    for (final v in validations) {
+    for (final v in validations.where((v) => v.field == field)) {
       final error = v.validate(value);
 
       if (error.isNotEmpty) {
