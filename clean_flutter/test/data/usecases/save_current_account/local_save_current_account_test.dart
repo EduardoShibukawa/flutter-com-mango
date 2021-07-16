@@ -10,16 +10,32 @@ class SaveSecureCacheStorageSpy extends Mock implements SaveSecureCacheStorage {
 }
 
 void main() {
-  test('Should call SaveSecureCacheStorage with correct values', () async {
-    final saveSecureCacheStorage = SaveSecureCacheStorageSpy();
-    final sut =
-        LocalSaveCurrentAccount(saveSecureCacheStorage: saveSecureCacheStorage);
-    final account = AccountEntity(faker.guid.guid());
-    when(() => saveSecureCacheStorage.save(
-          key: any(named: 'key'),
-          value: any(named: 'value'),
-        )).thenAnswer((_) => Future.value());
+  late LocalSaveCurrentAccount sut;
+  late SaveSecureCacheStorage saveSecureCacheStorage;
+  late AccountEntity account;
 
+  When mockSaveSecureCacheStorageCall() =>
+      when(() => saveSecureCacheStorage.save(
+            key: any(named: 'key'),
+            value: any(named: 'value'),
+          ));
+
+  void mockSaveSecureCacheStorage() =>
+      mockSaveSecureCacheStorageCall().thenAnswer((_) => Future.value());
+
+  void mockSaveSecureCacheStorageError() =>
+      mockSaveSecureCacheStorageCall().thenThrow(Exception());
+
+  setUp(() {
+    saveSecureCacheStorage = SaveSecureCacheStorageSpy();
+    sut =
+        LocalSaveCurrentAccount(saveSecureCacheStorage: saveSecureCacheStorage);
+    account = AccountEntity(faker.guid.guid());
+
+    mockSaveSecureCacheStorage();
+  });
+
+  test('Should call SaveSecureCacheStorage with correct values', () async {
     await sut.save(account);
 
     verify(
@@ -28,15 +44,7 @@ void main() {
 
   test('Should throw UnexpectedError if SaveSecureCacheStorage throws',
       () async {
-    final saveSecureCacheStorage = SaveSecureCacheStorageSpy();
-    final sut =
-        LocalSaveCurrentAccount(saveSecureCacheStorage: saveSecureCacheStorage);
-    final account = AccountEntity(faker.guid.guid());
-
-    when(() => saveSecureCacheStorage.save(
-          key: any(named: 'key'),
-          value: any(named: 'value'),
-        )).thenThrow(Exception());
+    mockSaveSecureCacheStorageError();
 
     final future = sut.save(account);
 
