@@ -1,3 +1,4 @@
+import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -17,15 +18,23 @@ class AuthenticationSpy extends Mock implements Authentication {}
 
 class FakeAuthenticationParams extends Fake implements AuthenticationParams {}
 
+class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
+
+class FakeAccount extends Fake implements AccountEntity {}
+
 void main() {
-  late GetxLoginPresenter sut;
+  late LoginPresenter sut;
   late Validation validation;
   late Authentication authentication;
+  late SaveCurrentAccount saveCurrentACcount;
+
   late String email;
   late String password;
+  late String token;
 
   setUpAll(() {
     registerFallbackValue(FakeAuthenticationParams());
+    registerFallbackValue(FakeAccount());
   });
 
   When mockValidationCall({String? field}) => when(() => validation.validate(
@@ -41,23 +50,34 @@ void main() {
       when(() => authentication.auth(params: any(named: 'params')));
 
   void mockAuthentication() {
-    mockAuthenticationCall()
-        .thenAnswer((_) async => AccountEntity(faker.guid.guid()));
+    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(token));
   }
 
   void mockAuthenticationError(DomainError error) {
     mockAuthenticationCall().thenThrow(error);
   }
 
+  When mockSaveCurrentAccountCall() =>
+      when(() => saveCurrentACcount.save(any()));
+
+  void mockSaveCurrentAccount() =>
+      mockSaveCurrentAccountCall().thenAnswer((_) => Future.value());
+
   setUp(() {
     validation = ValidationSpy();
     authentication = AuthenticationSpy();
+    saveCurrentACcount = SaveCurrentAccountSpy();
     sut = GetxLoginPresenter(
-        validation: validation, authentication: authentication);
+      validation: validation,
+      authentication: authentication,
+      saveCurrentAccount: saveCurrentACcount,
+    );
     email = faker.internet.email();
     password = faker.internet.password();
+    token = faker.guid.guid();
     mockValidation();
     mockAuthentication();
+    mockSaveCurrentAccount();
   });
 
   test('Should call Validation with correct email', () {
@@ -158,6 +178,17 @@ void main() {
           secret: password,
         ),
       ),
+    ).called(1);
+  });
+
+  test('Should call SaveCurrentAccount with correct values', () async {
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    await sut.auth();
+
+    verify(
+      () => saveCurrentACcount.save(AccountEntity(token)),
     ).called(1);
   });
 
