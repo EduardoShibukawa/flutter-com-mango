@@ -12,7 +12,7 @@ void main() {
     expect(sut.validate(''), '');
   });
 
-  test('Should return blank if email is empty', () {
+  test('Should return blank if email is null', () {
     expect(sut.validate(null), '');
   });
 
