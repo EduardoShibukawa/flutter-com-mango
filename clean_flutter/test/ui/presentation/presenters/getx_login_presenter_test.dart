@@ -19,7 +19,7 @@ class AuthenticationSpy extends Mock implements Authentication {}
 class FakeAuthenticationParams extends Fake implements AuthenticationParams {}
 
 void main() {
-  late LoginPresenter sut;
+  late GetxLoginPresenter sut;
   late Validation validation;
   late Authentication authentication;
   late String email;
@@ -53,7 +53,7 @@ void main() {
   setUp(() {
     validation = ValidationSpy();
     authentication = AuthenticationSpy();
-    sut = StreamLoginPresenter(
+    sut = GetxLoginPresenter(
         validation: validation, authentication: authentication);
     email = faker.internet.email();
     password = faker.internet.password();
@@ -177,8 +177,7 @@ void main() {
     sut.validateEmail(email);
     sut.validatePassword(password);
 
-    // It should be emitsInOrder([true, false]) but there is a bug i think with async and i couldn`t fix it
-    expectLater(sut.isLoadingStream, emitsInOrder([false]));
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     sut.mainErrorStream.listen(
         expectAsync1((error) => expect(error, 'Credenciais inválidas.')));
 
@@ -191,18 +190,10 @@ void main() {
     sut.validateEmail(email);
     sut.validatePassword(password);
 
-    // It should be emitsInOrder([true, false]) but there is a bug i think with async and i couldn`t fix it
-    expectLater(sut.isLoadingStream, emitsInOrder([false]));
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     sut.mainErrorStream.listen(expectAsync1((error) =>
         expect(error, 'Algo errado aconteceu. Tente novamente em breve.')));
 
     await sut.auth();
-  });
-
-  test('Should not emit after dispose', () async {
-    expectLater(sut.emailErrorStream, neverEmits(''));
-
-    sut.dispose();
-    sut.validateEmail(email);
   });
 }
