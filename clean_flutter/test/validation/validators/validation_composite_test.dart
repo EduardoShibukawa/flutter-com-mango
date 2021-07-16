@@ -1,8 +1,8 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'package:clean_flutter/presentation/presents/protocols/protocols.dart';
 import 'package:clean_flutter/validation/protocols/protocols.dart';
+import 'package:clean_flutter/validation/validators/validators.dart';
 
 class FieldValidationSpy extends Mock implements FieldValidation {}
 
@@ -53,22 +53,4 @@ void main() {
 
     expect(error, 'error_2');
   });
-}
-
-class ValidationComposite implements Validation {
-  final List<FieldValidation> validations;
-
-  ValidationComposite(this.validations);
-
-  String validate({required String field, required String value}) {
-    for (final v in validations.where((v) => v.field == field)) {
-      final error = v.validate(value);
-
-      if (error.isNotEmpty) {
-        return error;
-      }
-    }
-
-    return '';
-  }
 }
