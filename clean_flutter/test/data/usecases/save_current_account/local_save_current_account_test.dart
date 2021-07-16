@@ -1,10 +1,11 @@
-import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter/domain/entities/entities.dart';
-import 'package:clean_flutter/domain/usecases/usecases.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
+import 'package:clean_flutter/data/usecase/usecase.dart';
+import 'package:clean_flutter/data/cache/cache.dart';
 
 class SaveSecureCacheStorageSpy extends Mock implements SaveSecureCacheStorage {
 }
@@ -50,22 +51,4 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
-}
-
-abstract class SaveSecureCacheStorage {
-  Future<void> save({required String key, required String value});
-}
-
-class LocalSaveCurrentAccount implements SaveCurrentAccount {
-  final SaveSecureCacheStorage saveSecureCacheStorage;
-
-  LocalSaveCurrentAccount({required this.saveSecureCacheStorage});
-
-  Future<void> save(AccountEntity account) async {
-    try {
-      await saveSecureCacheStorage.save(key: 'token', value: account.token);
-    } catch (_) {
-      throw DomainError.unexpected;
-    }
-  }
 }
