@@ -6,7 +6,7 @@ class ValidationBuilder {
   List<FieldValidation> validations = [];
 
   ValidationBuilder() {
-    throw Error();
+    throw Exception('public constructor not allowed for builders');
   }
 
   ValidationBuilder._(this.fieldName);
