@@ -24,6 +24,7 @@ dev_dependencies:
   test:
   mocktail:
   faker:
+  flutter_secure_storage:
 
 flutter:
   uses-material-design: true
