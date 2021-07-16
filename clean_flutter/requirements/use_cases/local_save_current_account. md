@@ -1,7 +1,7 @@
 # Local Save Current Account Use Case
 
 > ## Caso de sucesso
-1. Sistema Grava o token de acesso do usuário no Cache de forma segura.
+1. ✅ Sistema Grava o token de acesso do usuário no Cache de forma segura.
 
 > ## Exção - Falha ao gravar no Cache
 1. Sistema retorna uma mensagem de erro inesperado.
