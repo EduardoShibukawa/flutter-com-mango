@@ -116,6 +116,64 @@ void main() {
 
     expectNoErrosInTextField('Email');
   });
+
+  testWidgets('Should present name error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    nameErrorController.add(UIError.invalidField);
+    await tester.pump();
+
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    nameErrorController.add(UIError.requiredField);
+    await tester.pump();
+
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    nameErrorController.add(null);
+    await tester.pump();
+
+    expectNoErrosInTextField('Nome');
+  });
+
+  testWidgets('Should present password error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordErrorController.add(UIError.invalidField);
+    await tester.pump();
+
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    passwordErrorController.add(UIError.requiredField);
+    await tester.pump();
+
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    passwordErrorController.add(null);
+    await tester.pump();
+
+    expectNoErrosInTextField('Senha');
+  });
+
+  testWidgets('Should present password confirmation error',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordConfirmationErrorController.add(UIError.invalidField);
+    await tester.pump();
+
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    passwordConfirmationErrorController.add(UIError.requiredField);
+    await tester.pump();
+
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    passwordConfirmationErrorController.add(null);
+    await tester.pump();
+
+    expectNoErrosInTextField('Confirmar senha');
+  });
 }
 
 void expectNoErrosInTextField(String field) {
