@@ -47,7 +47,7 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   LoginHeader(),
-                  HeadLine1(text: 'Login'),
+                  HeadLine1(text: R.strings.login),
                   Padding(
                     padding: const EdgeInsets.all(32),
                     child: Provider<LoginPresenter>(
