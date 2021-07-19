@@ -1,3 +1,4 @@
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -29,6 +30,10 @@ void main() {
     mockRequest().thenAnswer((_) async => data);
   }
 
+  void mockHttpError(HttpError error) {
+    mockRequest().thenThrow(error);
+  }
+
   setUp(() {
     // Arrange
     httpClient = MockHttpClient();
@@ -54,5 +59,16 @@ void main() {
           'password': params.password,
           'passwordConfirmation': params.passwordConfirmation,
         }));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 400', () async {
+    // Arrange
+    mockHttpError(HttpError.badRequest);
+
+    // Act
+    final future = sut.add(params: params);
+
+    // Assert
+    expect(future, throwsA(DomainError.unexpected));
   });
 }

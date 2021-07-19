@@ -1,4 +1,5 @@
 import 'package:clean_flutter/data/http/http.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 
 import '../../../domain/entities/entities.dart';
 import '../../../domain/usecases/usecases.dart';
@@ -11,12 +12,15 @@ class RemoteAddAccount implements AddAccount {
 
   Future<AccountEntity> add({required AddAccountParams params}) async {
     final body = RemoteAddAccountParams.fromDomain(params).toJson();
-
-    final httpResponse = await this.httpClient.request(
-          url: url,
-          method: 'post',
-          body: body,
-        );
+    try {
+      final httpResponse = await this.httpClient.request(
+            url: url,
+            method: 'post',
+            body: body,
+          );
+    } on HttpError {
+      throw DomainError.unexpected;
+    }
 
     return Future.value(AccountEntity(''));
   }
