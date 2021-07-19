@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/state_manager.dart';
 
-import 'protocols/protocols.dart';
+import 'presenters.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../domain/helpers/helpers.dart';
 import '../../ui/pages/pages.dart';

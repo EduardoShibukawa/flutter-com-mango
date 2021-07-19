@@ -5,11 +5,10 @@ import 'package:test/test.dart';
 
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 
-import 'package:clean_flutter/domain/entities/account_entity.dart';
+import 'package:clean_flutter/domain/entities/entities.dart';
 
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 
-import 'package:clean_flutter/presentation/presenters/protocols/protocols.dart';
 import 'package:clean_flutter/presentation/presenters/presenters.dart';
 
 class ValidationSpy extends Mock implements Validation {}
