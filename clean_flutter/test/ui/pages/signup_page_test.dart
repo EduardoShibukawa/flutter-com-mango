@@ -97,6 +97,25 @@ void main() {
     await tester.enterText(find.bySemanticsLabel('Confirmar senha'), senha);
     verify(() => presenter.validatePasswordConfirmation(senha)).called(1);
   });
+
+  testWidgets('Should present mail error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    emailErrorController.add(UIError.invalidField);
+    await tester.pump();
+
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    emailErrorController.add(UIError.requiredField);
+    await tester.pump();
+
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    emailErrorController.add(null);
+    await tester.pump();
+
+    expectNoErrosInTextField('Email');
+  });
 }
 
 void expectNoErrosInTextField(String field) {
