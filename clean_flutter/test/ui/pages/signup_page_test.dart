@@ -17,12 +17,14 @@ void main() {
   late StreamController<UIError?> emailErrorController;
   late StreamController<UIError?> passwordErrorController;
   late StreamController<UIError?> passwordConfirmationErrorController;
+  late StreamController<bool> isFormValidController;
 
   void initStreams() {
     nameErrorController = StreamController<UIError?>();
     emailErrorController = StreamController<UIError?>();
     passwordErrorController = StreamController<UIError?>();
     passwordConfirmationErrorController = StreamController<UIError?>();
+    isFormValidController = StreamController<bool>();
   }
 
   void closeStreams() {
@@ -30,6 +32,7 @@ void main() {
     emailErrorController.close();
     passwordErrorController.close();
     passwordConfirmationErrorController.close();
+    isFormValidController.close();
   }
 
   void mockStreams() {
@@ -41,6 +44,8 @@ void main() {
         .thenAnswer((_) => passwordErrorController.stream);
     when(() => presenter.passwordConfirmationErrorStream)
         .thenAnswer((_) => passwordConfirmationErrorController.stream);
+    when(() => presenter.isFormValidStream)
+        .thenAnswer((_) => isFormValidController.stream);
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -173,6 +178,30 @@ void main() {
     await tester.pump();
 
     expectNoErrosInTextField('Confirmar senha');
+  });
+
+  testWidgets('Should enable button if form is valid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+
+    expect(button.onPressed, isNotNull);
+  });
+
+  testWidgets('Should disable button if form is invalid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(false);
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+
+    expect(button.onPressed, null);
   });
 }
 
