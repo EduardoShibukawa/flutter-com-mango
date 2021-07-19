@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import 'login.dart';
-import '../../helpers/errors/errors.dart';
-import '../../../utils/i18n/i18n.dart';
+
+import '../../helpers/helpers.dart';
+
 import '../../components/components.dart';
 
 class LoginPage extends StatelessWidget {

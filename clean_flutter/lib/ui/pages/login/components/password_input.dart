@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../pages.dart';
-import '../../../helpers/errors/errors.dart';
+import '../../../helpers/helpers.dart';
 
 class PasswordInput extends StatelessWidget {
   @override
@@ -14,7 +14,7 @@ class PasswordInput extends StatelessWidget {
         builder: (context, snapshot) {
           return TextFormField(
             decoration: InputDecoration(
-              labelText: 'Senha',
+              labelText: R.strings.password,
               icon: Icon(
                 Icons.lock,
                 color: Theme.of(context).primaryColorLight,
