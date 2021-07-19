@@ -1,10 +1,10 @@
-import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter/data/http/http.dart';
 import 'package:clean_flutter/data/usecase/usecase.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 
 class MockHttpClient extends Mock implements HttpClient {}
@@ -104,5 +104,22 @@ void main() {
 
     // Assert
     expect(future, throwsA(DomainError.emailInUse));
+  });
+
+  test('Should return an Account if HttpClient returns 200', () async {
+    // Arrange
+    final accessToken = faker.guid.guid();
+    final name = faker.person.name();
+
+    mockHttpData({
+      'accessToken': accessToken,
+      'name': name,
+    });
+
+    // Act
+    final account = await sut.add(params: params);
+
+    // Assert
+    expect(account.token, accessToken);
   });
 }

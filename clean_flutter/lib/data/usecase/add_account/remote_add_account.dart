@@ -1,6 +1,8 @@
 import 'package:clean_flutter/data/http/http.dart';
-import 'package:clean_flutter/domain/helpers/helpers.dart';
 
+import '../../models/models.dart';
+
+import '../../../domain/helpers/helpers.dart';
 import '../../../domain/entities/entities.dart';
 import '../../../domain/usecases/usecases.dart';
 
@@ -18,6 +20,8 @@ class RemoteAddAccount implements AddAccount {
             method: 'post',
             body: body,
           );
+
+      return RemoteAccountModel.fromJson(httpResponse).toEntity();
     } on HttpError catch (error) {
       throw error == HttpError.forbidden
           ? DomainError.emailInUse
