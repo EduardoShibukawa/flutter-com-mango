@@ -27,7 +27,6 @@ class RemoteAddAccount implements AddAccount {
           ? DomainError.emailInUse
           : DomainError.unexpected;
     }
-    return Future.value(AccountEntity(''));
   }
 }
 
