@@ -190,7 +190,9 @@ void main() {
     isFormValidController.add(true);
     await tester.pump();
 
-    await tester.tap(find.byType(ElevatedButton));
+    var loginButton = find.byType(ElevatedButton);
+    await tester.ensureVisible(loginButton);
+    await tester.tap(loginButton);
     await tester.pump();
 
     verify(() => presenter.auth()).called(1);

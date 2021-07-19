@@ -203,6 +203,21 @@ void main() {
 
     expect(button.onPressed, null);
   });
+
+  testWidgets('Should call signUp on form submit', (WidgetTester tester) async {
+    await loadPage(tester);
+    when(() => presenter.signUp()).thenAnswer((_) async {});
+
+    isFormValidController.add(true);
+    await tester.pump();
+
+    var signUpButton = find.byType(ElevatedButton);
+    await tester.ensureVisible(signUpButton);
+    await tester.tap(signUpButton);
+    await tester.pump();
+
+    verify(() => presenter.signUp()).called(1);
+  });
 }
 
 void expectNoErrosInTextField(String field) {
