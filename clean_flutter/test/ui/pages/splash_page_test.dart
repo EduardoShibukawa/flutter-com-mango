@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/route_manager.dart';
 import 'package:mocktail/mocktail.dart';
 
+import 'package:clean_flutter/ui/pages/splash/splash.dart';
+
 class SplashPresenterSpy extends Mock implements SplashPresenter {}
 
 void main() {
@@ -74,37 +76,4 @@ void main() {
 
     expect(Get.currentRoute, '/');
   });
-}
-
-abstract class SplashPresenter {
-  Stream<String> get navigateToStream;
-  Future<void> loadCurrentAccount();
-}
-
-class SplashPage extends StatelessWidget {
-  final SplashPresenter presenter;
-
-  SplashPage({required this.presenter});
-
-  @override
-  Widget build(BuildContext context) {
-    presenter.loadCurrentAccount();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('4Dev'),
-      ),
-      body: Builder(builder: (context) {
-        presenter.navigateToStream.listen((page) {
-          if (page.isNotEmpty) {
-            Get.offAllNamed(page);
-          }
-        });
-
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      }),
-    );
-  }
 }
