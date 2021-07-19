@@ -1,3 +1,4 @@
+import 'package:clean_flutter/presentation/presenters/presenters.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter/validation/validators/validators.dart';
@@ -9,15 +10,15 @@ void main() {
     sut = RequiredFieldValidation('any_field');
   });
 
-  test('should return empty error if value is not empty', () {
-    expect(sut.validate('any_value'), '');
+  test('should return null if value is not empty', () {
+    expect(sut.validate('any_value'), null);
   });
 
   test('should return error if value is empty', () {
-    expect(sut.validate(''), 'Campo obrigatório!');
+    expect(sut.validate(''), ValidationError.requiredField);
   });
 
   test('should return error if value is null', () {
-    expect(sut.validate(null), 'Campo obrigatório!');
+    expect(sut.validate(null), ValidationError.requiredField);
   });
 }

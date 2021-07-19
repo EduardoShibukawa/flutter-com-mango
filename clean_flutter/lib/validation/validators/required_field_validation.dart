@@ -1,3 +1,4 @@
+import 'package:clean_flutter/presentation/presenters/presenters.dart';
 import 'package:equatable/equatable.dart';
 
 import '../protocols/protocols.dart';
@@ -9,8 +10,7 @@ class RequiredFieldValidation extends Equatable implements FieldValidation {
 
   RequiredFieldValidation(this.field);
 
-  @override
-  String validate(String? value) {
-    return value?.isNotEmpty == true ? '' : 'Campo obrigatório!';
+  ValidationError? validate(String? value) {
+    return value?.isNotEmpty == true ? null : ValidationError.requiredField;
   }
 }

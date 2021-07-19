@@ -1,5 +1,7 @@
-import 'package:clean_flutter/validation/validators/validators.dart';
 import 'package:test/test.dart';
+
+import 'package:clean_flutter/presentation/presenters/presenters.dart';
+import 'package:clean_flutter/validation/validators/validators.dart';
 
 void main() {
   late EmailValidation sut;
@@ -8,19 +10,19 @@ void main() {
     sut = EmailValidation('any_field');
   });
 
-  test('Should return blank if email is empty', () {
-    expect(sut.validate(''), '');
+  test('Should return null if email is empty', () {
+    expect(sut.validate(''), null);
   });
 
-  test('Should return blank if email is null', () {
-    expect(sut.validate(null), '');
+  test('Should return null if email is null', () {
+    expect(sut.validate(null), null);
   });
 
-  test('Should return blank if email is valid', () {
-    expect(sut.validate('eduardoshibuka@gmail.com'), '');
+  test('Should return null if email is valid', () {
+    expect(sut.validate('eduardoshibuka@gmail.com'), null);
   });
 
   test('Should return error if email is invalid', () {
-    expect(sut.validate('eduardoshibuka@gmail'), 'Campo inválido!');
+    expect(sut.validate('eduardoshibuka@gmail'), ValidationError.invalidField);
   });
 }

@@ -1,6 +1,8 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_flutter/presentation/presenters/presenters.dart';
+
 import 'package:clean_flutter/validation/protocols/protocols.dart';
 import 'package:clean_flutter/validation/validators/validators.dart';
 
@@ -12,15 +14,15 @@ void main() {
   late FieldValidation validation2;
   late FieldValidation validation3;
 
-  mockValidation1(String error) {
+  mockValidation1(ValidationError? error) {
     when(() => validation1.validate(any())).thenReturn(error);
   }
 
-  mockValidation2(String error) {
+  mockValidation2(ValidationError? error) {
     when(() => validation2.validate(any())).thenReturn(error);
   }
 
-  mockValidation3(String error) {
+  mockValidation3(ValidationError? error) {
     when(() => validation3.validate(any())).thenReturn(error);
   }
 
@@ -33,24 +35,24 @@ void main() {
     when(() => validation1.field).thenReturn('other_field');
     when(() => validation2.field).thenReturn('any_field');
     when(() => validation3.field).thenReturn('any_field');
-    mockValidation1('');
-    mockValidation2('');
-    mockValidation3('');
+    mockValidation1(null);
+    mockValidation2(null);
+    mockValidation3(null);
   });
 
-  test('Should return empty if all validations return empty', () {
+  test('Should return null if all validations return null', () {
     final error = sut.validate(field: 'any_field', value: 'any_value');
 
-    expect(error, '');
+    expect(error, null);
   });
 
   test('Should return the first error found', () {
-    mockValidation1('error_1');
-    mockValidation2('error_2');
-    mockValidation3('error_3');
+    mockValidation1(ValidationError.requiredField);
+    mockValidation2(ValidationError.requiredField);
+    mockValidation3(ValidationError.invalidField);
 
     final error = sut.validate(field: 'any_field', value: 'any_value');
 
-    expect(error, 'error_2');
+    expect(error, ValidationError.requiredField);
   });
 }
