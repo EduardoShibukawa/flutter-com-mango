@@ -1,8 +1,10 @@
+import 'package:clean_flutter/domain/usecases/load_current_account.dart';
+
 import '../../cache/cache.dart';
 import '../../../domain/entities/entities.dart';
 import '../../../domain/helpers/helpers.dart';
 
-class LocalLoadCurrentAccount {
+class LocalLoadCurrentAccount implements LoadCurrentAccount {
   final FetchSecureCacheStorage fetchSecureCacheStorage;
 
   LocalLoadCurrentAccount({required this.fetchSecureCacheStorage});
