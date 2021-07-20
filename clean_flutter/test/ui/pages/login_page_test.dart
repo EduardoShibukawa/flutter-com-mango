@@ -258,6 +258,18 @@ void main() {
 
     expect(Get.currentRoute, '/login');
   });
+
+  testWidgets('Should call goToSignUp on link click',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    var loginButton = find.text('Criar conta');
+    await tester.ensureVisible(loginButton);
+    await tester.tap(loginButton);
+    await tester.pump();
+
+    verify(() => presenter.goToSignUp()).called(1);
+  });
 }
 
 void expectNoErrosInTextField(String field) {

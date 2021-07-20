@@ -88,6 +88,10 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
     }
   }
 
+  void goToSignUp() {
+    _navigateTo.value = '/signup';
+  }
+
   void _validateForm() {
     _isFormValid.value = _emailError.value == null &&
         _passwordError.value == null &&
