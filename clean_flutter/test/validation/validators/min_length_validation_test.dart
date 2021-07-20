@@ -10,6 +10,7 @@ void main() {
   setUp(() {
     sut = MinLengthValidation(field: 'any_field', size: 5);
   });
+
   test('Should return error if value is empty', () {
     final formData = {'any_field': ''};
 
