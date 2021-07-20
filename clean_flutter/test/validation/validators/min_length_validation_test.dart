@@ -1,5 +1,6 @@
 import 'package:clean_flutter/presentation/presenters/protocols/validation.dart';
 import 'package:clean_flutter/validation/protocols/field_validation.dart';
+import 'package:faker/faker.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -14,6 +15,11 @@ void main() {
 
   test('Should return error if value is null', () {
     expect(sut.validate(null), ValidationError.invalidField);
+  });
+
+  test('Should return error if value is less than min size', () {
+    expect(sut.validate(faker.randomGenerator.string(4, min: 1)),
+        ValidationError.invalidField);
   });
 }
 
