@@ -94,6 +94,4 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
         _password.isNotEmpty &&
         _email.isNotEmpty;
   }
-
-  void dispose();
 }

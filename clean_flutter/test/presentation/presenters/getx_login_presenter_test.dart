@@ -178,7 +178,7 @@ void main() {
 
     expectLater(sut.isFormValidStream, emitsInOrder([false, true]));
 
-    sut.validateEmail(password);
+    sut.validateEmail(email);
     await Future.delayed(Duration.zero);
     sut.validatePassword(password);
   });

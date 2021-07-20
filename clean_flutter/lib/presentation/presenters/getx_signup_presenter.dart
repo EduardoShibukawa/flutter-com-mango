@@ -9,12 +9,23 @@ import 'presenters.dart';
 class GetxSignUpPresenter extends GetxController {
   final Validation validation;
 
+  String _name = '';
+  String _email = '';
+  String _password = '';
+  String _passwordConfirmation = '';
+
   var _emailError = Rxn<UIError?>();
   var _nameError = Rxn<UIError?>();
+  var _passwordError = Rxn<UIError?>();
+  var _passwordConfirmationError = Rxn<UIError?>();
+
   var _isFormValid = false.obs;
 
   Stream<UIError?> get emailErrorStream => _emailError.stream;
   Stream<UIError?> get nameErrorStream => _nameError.stream;
+  Stream<UIError?> get passwordErrorStream => _passwordError.stream;
+  Stream<UIError?> get passwordConfirmationErrorStream =>
+      _passwordConfirmationError.stream;
 
   Stream<bool> get isFormValidStream => _isFormValid.stream.map((s) => s!);
 
@@ -23,12 +34,27 @@ class GetxSignUpPresenter extends GetxController {
   });
 
   void validateEmail(String email) {
+    _email = email;
     _emailError.value = _validateField(field: 'email', value: email);
     _validateForm();
   }
 
   void validateName(String name) {
+    _name = name;
     _nameError.value = _validateField(field: 'name', value: name);
+    _validateForm();
+  }
+
+  void validatePassword(String password) {
+    _password = password;
+    _passwordError.value = _validateField(field: 'password', value: password);
+    _validateForm();
+  }
+
+  void validatePasswordConfirmation(String passwordConfirmation) {
+    _passwordConfirmation = passwordConfirmation;
+    _passwordConfirmationError.value = _validateField(
+        field: 'passwordConfirmation', value: passwordConfirmation);
     _validateForm();
   }
 
@@ -46,8 +72,16 @@ class GetxSignUpPresenter extends GetxController {
   }
 
   void _validateForm() {
-    _isFormValid.value = false;
-  }
+    final hasNoErrors = _nameError.value == null &&
+        _emailError.value == null &&
+        _passwordError.value == null &&
+        _passwordConfirmationError.value == null;
 
-  void dispose();
+    final hasValues = _password.isNotEmpty &&
+        _email.isNotEmpty &&
+        _passwordConfirmation.isNotEmpty &&
+        _name.isNotEmpty;
+
+    _isFormValid.value = hasNoErrors && hasValues;
+  }
 }
