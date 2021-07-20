@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/state_manager.dart';
 
@@ -8,6 +9,7 @@ import 'presenters.dart';
 
 class GetxSignUpPresenter extends GetxController {
   final Validation validation;
+  final AddAccount addAccount;
 
   String _name = '';
   String _email = '';
@@ -31,6 +33,7 @@ class GetxSignUpPresenter extends GetxController {
 
   GetxSignUpPresenter({
     required this.validation,
+    required this.addAccount,
   });
 
   void validateEmail(String email) {
@@ -56,6 +59,14 @@ class GetxSignUpPresenter extends GetxController {
     _passwordConfirmationError.value = _validateField(
         field: 'passwordConfirmation', value: passwordConfirmation);
     _validateForm();
+  }
+
+  Future<void> signup() async {
+    await addAccount.add(AddAccountParams(
+        name: _name,
+        email: _email,
+        password: _password,
+        passwordConfirmation: _passwordConfirmation));
   }
 
   UIError? _validateField({required String field, required String value}) {

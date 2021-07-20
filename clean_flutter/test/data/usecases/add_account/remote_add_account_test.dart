@@ -50,7 +50,7 @@ void main() {
 
   test('Should call HttpClient with correct values', () async {
     // Act
-    await sut.add(params: params);
+    await sut.add(params);
 
     // Assert
     verify(() => httpClient.request(url: url, method: 'post', body: {
@@ -66,7 +66,7 @@ void main() {
     mockHttpError(HttpError.badRequest);
 
     // Act
-    final future = sut.add(params: params);
+    final future = sut.add(params);
 
     // Assert
     expect(future, throwsA(DomainError.unexpected));
@@ -77,7 +77,7 @@ void main() {
     mockHttpError(HttpError.notFound);
 
     // Act
-    final future = sut.add(params: params);
+    final future = sut.add(params);
 
     // Assert
     expect(future, throwsA(DomainError.unexpected));
@@ -88,7 +88,7 @@ void main() {
     mockHttpError(HttpError.serverError);
 
     // Act
-    final future = sut.add(params: params);
+    final future = sut.add(params);
 
     // Assert
     expect(future, throwsA(DomainError.unexpected));
@@ -100,7 +100,7 @@ void main() {
     mockHttpError(HttpError.forbidden);
 
     // Act
-    final future = sut.add(params: params);
+    final future = sut.add(params);
 
     // Assert
     expect(future, throwsA(DomainError.emailInUse));
@@ -117,7 +117,7 @@ void main() {
     });
 
     // Act
-    final account = await sut.add(params: params);
+    final account = await sut.add(params);
 
     // Assert
     expect(account.token, accessToken);
@@ -132,7 +132,7 @@ void main() {
     });
 
     // Act
-    final future = sut.add(params: params);
+    final future = sut.add(params);
 
     // Assert
     expect(future, throwsA(DomainError.unexpected));

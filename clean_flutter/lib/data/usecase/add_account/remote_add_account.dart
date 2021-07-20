@@ -12,7 +12,7 @@ class RemoteAddAccount implements AddAccount {
 
   RemoteAddAccount({required this.httpClient, required this.url});
 
-  Future<AccountEntity> add({required AddAccountParams params}) async {
+  Future<AccountEntity> add(AddAccountParams params) async {
     final body = RemoteAddAccountParams.fromDomain(params).toJson();
     try {
       final httpResponse = await this.httpClient.request(
