@@ -21,16 +21,20 @@ class GetxSignUpPresenter extends GetxController {
   var _nameError = Rxn<UIError?>();
   var _passwordError = Rxn<UIError?>();
   var _passwordConfirmationError = Rxn<UIError?>();
+  var _mainError = Rxn<UIError?>();
 
   var _isFormValid = false.obs;
+  var _isLoading = false.obs;
 
   Stream<UIError?> get emailErrorStream => _emailError.stream;
   Stream<UIError?> get nameErrorStream => _nameError.stream;
   Stream<UIError?> get passwordErrorStream => _passwordError.stream;
   Stream<UIError?> get passwordConfirmationErrorStream =>
       _passwordConfirmationError.stream;
+  Stream<UIError?> get mainErrorStream => _mainError.stream;
 
   Stream<bool> get isFormValidStream => _isFormValid.stream.map((s) => s!);
+  Stream<bool> get isLoadingStream => _isLoading.stream.map((s) => s!);
 
   GetxSignUpPresenter({
     required this.validation,
@@ -64,13 +68,19 @@ class GetxSignUpPresenter extends GetxController {
   }
 
   Future<void> signup() async {
-    final account = await addAccount.add(AddAccountParams(
-        name: _name,
-        email: _email,
-        password: _password,
-        passwordConfirmation: _passwordConfirmation));
+    _isLoading.value = true;
+    try {
+      final account = await addAccount.add(AddAccountParams(
+          name: _name,
+          email: _email,
+          password: _password,
+          passwordConfirmation: _passwordConfirmation));
 
-    await saveCurrentAccount.save(account);
+      await saveCurrentAccount.save(account);
+    } on Exception {
+      _mainError.value = UIError.unexpected;
+      _isLoading.value = false;
+    }
   }
 
   UIError? _validateField({required String field, required String value}) {
