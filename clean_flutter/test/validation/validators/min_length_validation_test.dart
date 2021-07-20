@@ -3,18 +3,17 @@ import 'package:clean_flutter/validation/protocols/field_validation.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('Should return error if value is empty', () {
-    final sut = MinLengthValidation(field: 'any_field', size: 5);
-    final error = sut.validate('');
+  late MinLengthValidation sut;
 
-    expect(error, ValidationError.invalidField);
+  setUp(() {
+    sut = MinLengthValidation(field: 'any_field', size: 5);
+  });
+  test('Should return error if value is empty', () {
+    expect(sut.validate(''), ValidationError.invalidField);
   });
 
   test('Should return error if value is null', () {
-    final sut = MinLengthValidation(field: 'any_field', size: 5);
-    final error = sut.validate(null);
-
-    expect(error, ValidationError.invalidField);
+    expect(sut.validate(null), ValidationError.invalidField);
   });
 }
 
