@@ -1,4 +1,5 @@
 import 'package:clean_flutter/domain/entities/account_entity.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
@@ -49,6 +50,9 @@ void main() {
   void mockAddAccount() =>
       mockAddAccountCall().thenAnswer((_) async => AccountEntity(token));
 
+  void mockAddAccountError(DomainError error) =>
+      mockAddAccountCall().thenThrow(error);
+
   When mockSaveCurrentAccountCall() =>
       when(() => saveCurrentAccount.save(any()));
 
@@ -56,7 +60,7 @@ void main() {
       mockSaveCurrentAccountCall().thenAnswer((_) async => {});
 
   void mockSaveCurrentAccountError() =>
-      mockSaveCurrentAccountCall().thenThrow(Exception());
+      mockSaveCurrentAccountCall().thenThrow(DomainError.unexpected);
 
   setUp(() {
     validation = ValidationSpy();
@@ -331,6 +335,36 @@ void main() {
     sut.validatePasswordConfirmation(passwordConfirmation);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true]));
+
+    await sut.signup();
+  });
+
+  test('Should emit correct events on EmailInUseError', () async {
+    mockAddAccountError(DomainError.emailInUse);
+
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    sut.mainErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.emailInUse)));
+
+    await sut.signup();
+  });
+
+  test('Should emit correct events on UnexpectedError', () async {
+    mockAddAccountError(DomainError.unexpected);
+
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    sut.mainErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.unexpected)));
 
     await sut.signup();
   });

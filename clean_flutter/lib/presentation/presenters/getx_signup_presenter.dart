@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/state_manager.dart';
@@ -77,8 +78,15 @@ class GetxSignUpPresenter extends GetxController {
           passwordConfirmation: _passwordConfirmation));
 
       await saveCurrentAccount.save(account);
-    } on Exception {
-      _mainError.value = UIError.unexpected;
+    } on DomainError catch (error) {
+      switch (error) {
+        case DomainError.emailInUse:
+          _mainError.value = UIError.emailInUse;
+          break;
+        default:
+          _mainError.value = UIError.unexpected;
+          break;
+      }
       _isLoading.value = false;
     }
   }
