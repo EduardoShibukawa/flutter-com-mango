@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:clean_flutter/domain/helpers/helpers.dart';
-import 'package:clean_flutter/domain/usecases/usecases.dart';
-import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/state_manager.dart';
 
+import '../../domain/helpers/helpers.dart';
+import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/errors/errors.dart';
+import '../../ui/pages/pages.dart';
 import 'presenters.dart';
 
 class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
@@ -97,6 +97,10 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
       }
       _isLoading.value = false;
     }
+  }
+
+  void goToLogin() {
+    _navigateTo.value = '/login';
   }
 
   UIError? _validateField({required String field, required String value}) {
