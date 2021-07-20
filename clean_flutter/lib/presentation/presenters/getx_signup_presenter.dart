@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
+import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/state_manager.dart';
 
 import '../../ui/helpers/errors/errors.dart';
 import 'presenters.dart';
 
-class GetxSignUpPresenter extends GetxController {
+class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
   final SaveCurrentAccount saveCurrentAccount;
@@ -24,6 +25,8 @@ class GetxSignUpPresenter extends GetxController {
   var _passwordConfirmationError = Rxn<UIError?>();
   var _mainError = Rxn<UIError?>();
 
+  var _navigateTo = RxnString();
+
   var _isFormValid = false.obs;
   var _isLoading = false.obs;
 
@@ -33,6 +36,8 @@ class GetxSignUpPresenter extends GetxController {
   Stream<UIError?> get passwordConfirmationErrorStream =>
       _passwordConfirmationError.stream;
   Stream<UIError?> get mainErrorStream => _mainError.stream;
+
+  Stream<String> get navigateToStream => _navigateTo.map((s) => s!);
 
   Stream<bool> get isFormValidStream => _isFormValid.stream.map((s) => s!);
   Stream<bool> get isLoadingStream => _isLoading.stream.map((s) => s!);
@@ -68,16 +73,19 @@ class GetxSignUpPresenter extends GetxController {
     _validateForm();
   }
 
-  Future<void> signup() async {
+  Future<void> signUp() async {
     _isLoading.value = true;
     try {
-      final account = await addAccount.add(AddAccountParams(
-          name: _name,
-          email: _email,
-          password: _password,
-          passwordConfirmation: _passwordConfirmation));
+      final account = await addAccount.add(
+        AddAccountParams(
+            name: _name,
+            email: _email,
+            password: _password,
+            passwordConfirmation: _passwordConfirmation),
+      );
 
       await saveCurrentAccount.save(account);
+      _navigateTo.value = '/surveys';
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.emailInUse:

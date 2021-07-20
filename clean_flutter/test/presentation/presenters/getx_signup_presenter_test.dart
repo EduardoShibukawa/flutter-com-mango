@@ -286,7 +286,7 @@ void main() {
     sut.validatePassword(password);
     sut.validatePasswordConfirmation(passwordConfirmation);
 
-    await sut.signup();
+    await sut.signUp();
 
     verify(
       () => addAccount.add(
@@ -306,7 +306,7 @@ void main() {
     sut.validatePassword(password);
     sut.validatePasswordConfirmation(passwordConfirmation);
 
-    await sut.signup();
+    await sut.signUp();
 
     verify(
       () => saveCurrentAccount.save(AccountEntity(token)),
@@ -325,7 +325,7 @@ void main() {
     sut.mainErrorStream
         .listen(expectAsync1((error) => expect(error, UIError.unexpected)));
 
-    await sut.signup();
+    await sut.signUp();
   });
 
   test('Should emit correct events on AddAccount success', () async {
@@ -336,7 +336,7 @@ void main() {
 
     expectLater(sut.isLoadingStream, emitsInOrder([true]));
 
-    await sut.signup();
+    await sut.signUp();
   });
 
   test('Should emit correct events on EmailInUseError', () async {
@@ -351,7 +351,7 @@ void main() {
     sut.mainErrorStream
         .listen(expectAsync1((error) => expect(error, UIError.emailInUse)));
 
-    await sut.signup();
+    await sut.signUp();
   });
 
   test('Should emit correct events on UnexpectedError', () async {
@@ -366,6 +366,16 @@ void main() {
     sut.mainErrorStream
         .listen(expectAsync1((error) => expect(error, UIError.unexpected)));
 
-    await sut.signup();
+    await sut.signUp();
+  });
+
+  test('Should change page on success', () async {
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    sut.navigateToStream.listen((page) => expect(page, '/surveys'));
+    await sut.signUp();
   });
 }
