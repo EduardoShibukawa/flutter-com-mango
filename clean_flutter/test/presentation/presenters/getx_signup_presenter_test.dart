@@ -13,10 +13,15 @@ class AddAccountSpy extends Mock implements AddAccount {}
 
 class FakeAddAccountParams extends Fake implements AddAccountParams {}
 
+class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
+
+class FakeAccountEntity extends Fake implements AccountEntity {}
+
 void main() {
   late GetxSignUpPresenter sut;
   late Validation validation;
   late AddAccount addAccount;
+  late SaveCurrentAccount saveCurrentAccount;
 
   late String email;
   late String name;
@@ -27,6 +32,7 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(FakeAddAccountParams());
+    registerFallbackValue(FakeAccountEntity());
   });
 
   When mockValidationCall({String? field}) => when(() => validation.validate(
@@ -43,10 +49,21 @@ void main() {
   void mockAddAccount() =>
       mockAddAccountCall().thenAnswer((_) async => AccountEntity(token));
 
+  When mockSaveCurrentAccountCall() =>
+      when(() => saveCurrentAccount.save(any()));
+
+  void mockSaveCurrentAccount() =>
+      mockSaveCurrentAccountCall().thenAnswer((_) async => {});
+
   setUp(() {
     validation = ValidationSpy();
     addAccount = AddAccountSpy();
-    sut = GetxSignUpPresenter(validation: validation, addAccount: addAccount);
+    saveCurrentAccount = SaveCurrentAccountSpy();
+    sut = GetxSignUpPresenter(
+      validation: validation,
+      addAccount: addAccount,
+      saveCurrentAccount: saveCurrentAccount,
+    );
     email = faker.internet.email();
     name = faker.person.name();
     password = faker.internet.password();
@@ -54,6 +71,7 @@ void main() {
     token = faker.guid.guid();
     mockValidation();
     mockAddAccount();
+    mockSaveCurrentAccount();
   });
 
   test('Should call Validation with correct name', () {
@@ -272,6 +290,19 @@ void main() {
           passwordConfirmation: passwordConfirmation,
         ),
       ),
+    ).called(1);
+  });
+
+  test('Should call SaveCurrentAccount with correct values', () async {
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    await sut.signup();
+
+    verify(
+      () => saveCurrentAccount.save(AccountEntity(token)),
     ).called(1);
   });
 }
