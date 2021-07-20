@@ -11,14 +11,20 @@ void main() {
   });
 
   test('should return null if value is not empty', () {
-    expect(sut.validate('any_value'), null);
+    final formData = {'any_field': 'any_value'};
+
+    expect(sut.validate(formData), null);
   });
 
   test('should return error if value is empty', () {
-    expect(sut.validate(''), ValidationError.requiredField);
+    final formData = {'any_field': ''};
+
+    expect(sut.validate(formData), ValidationError.requiredField);
   });
 
   test('should return error if value is null', () {
-    expect(sut.validate(null), ValidationError.requiredField);
+    final formData = {'any_field': null};
+
+    expect(sut.validate(formData), ValidationError.requiredField);
   });
 }

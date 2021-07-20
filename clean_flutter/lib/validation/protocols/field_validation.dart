@@ -2,5 +2,5 @@ import 'package:clean_flutter/presentation/presenters/presenters.dart';
 
 abstract class FieldValidation {
   String get field;
-  ValidationError? validate(String? value);
+  ValidationError? validate(Map input);
 }

@@ -6,9 +6,9 @@ class ValidationComposite implements Validation {
 
   ValidationComposite(this.validations);
 
-  ValidationError? validate({required String field, required String value}) {
+  ValidationError? validate({required String field, required Map input}) {
     for (final v in validations.where((v) => v.field == field)) {
-      final error = v.validate(value);
+      final error = v.validate(input);
 
       if (error != null) {
         return error;

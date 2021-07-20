@@ -7,22 +7,34 @@ void main() {
   late EmailValidation sut;
 
   setUp(() {
-    sut = EmailValidation('any_field');
+    sut = EmailValidation('email');
   });
 
   test('Should return null if email is empty', () {
-    expect(sut.validate(''), null);
+    final formData = {
+      'email': '',
+    };
+    expect(sut.validate(formData), null);
   });
 
   test('Should return null if email is null', () {
-    expect(sut.validate(null), null);
+    final formData = {
+      'email': null,
+    };
+    expect(sut.validate(formData), null);
   });
 
   test('Should return null if email is valid', () {
-    expect(sut.validate('eduardoshibuka@gmail.com'), null);
+    final formData = {
+      'email': 'eduardoshibuka@gmail.com',
+    };
+    expect(sut.validate(formData), null);
   });
 
   test('Should return error if email is invalid', () {
-    expect(sut.validate('eduardoshibuka@gmail'), ValidationError.invalidField);
+    final formData = {
+      'email': 'eduardoshibuka@gmail',
+    };
+    expect(sut.validate(formData), ValidationError.invalidField);
   });
 }
