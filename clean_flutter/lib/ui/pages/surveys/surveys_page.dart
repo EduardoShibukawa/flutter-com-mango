@@ -1,14 +1,19 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:flutter/material.dart';
 
 import '../../helpers/helpers.dart';
 import 'components/components.dart';
 
-class SurveyPage extends StatelessWidget {
-  const SurveyPage({Key? key}) : super(key: key);
+class SurveysPage extends StatelessWidget {
+  final SurveysPresenter presenter;
+
+  SurveysPage(this.presenter);
 
   @override
   Widget build(BuildContext context) {
+    presenter.loadData();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
