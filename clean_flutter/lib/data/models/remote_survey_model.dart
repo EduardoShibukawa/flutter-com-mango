@@ -1,4 +1,5 @@
 import 'package:clean_flutter/data/http/http.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 
 import '../../domain/entities/entities.dart';
 
@@ -16,6 +17,12 @@ class RemoteSurveyModel {
   });
 
   factory RemoteSurveyModel.fromJson(Map json) {
+    if (!json.keys
+        .toSet()
+        .containsAll(['id', 'question', 'date', 'didAnswer'])) {
+      throw HttpError.invalidData;
+    }
+
     return RemoteSurveyModel(
       id: json['id'],
       question: json['question'],
