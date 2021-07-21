@@ -236,5 +236,22 @@ void main() {
 
       expect(response, {});
     });
+
+    test('should return BadRequestError if post returns 400 without body',
+        () async {
+      mockResponse(400, body: '');
+
+      final future = sut.request(url: url.toString(), method: 'get');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('should return BadRequestError if post returns 400', () async {
+      mockResponse(400);
+
+      final future = sut.request(url: url.toString(), method: 'get');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
   });
 }
