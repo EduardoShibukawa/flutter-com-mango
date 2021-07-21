@@ -1,6 +1,4 @@
-import 'package:clean_flutter/data/http/http.dart';
-import 'package:clean_flutter/domain/helpers/helpers.dart';
-
+import '../http/http.dart';
 import '../../domain/entities/entities.dart';
 
 class RemoteSurveyModel {

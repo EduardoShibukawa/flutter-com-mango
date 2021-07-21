@@ -1,10 +1,12 @@
-import 'package:clean_flutter/data/models/models.dart';
-import 'package:clean_flutter/domain/entities/entities.dart';
-import 'package:clean_flutter/domain/helpers/helpers.dart';
+import 'dart:math';
+
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_flutter/domain/entities/entities.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
+import 'package:clean_flutter/data/models/models.dart';
 import 'package:clean_flutter/data/http/http.dart';
 
 class HttpClientSpy extends Mock implements HttpClient<List<Map>> {}
@@ -15,7 +17,7 @@ void main() {
   late RemoteLoadSurveys sut;
   late List<Map> httpData;
 
-  List<Map> mockValidData() => List.filled(3, {
+  List<Map> mockValidData() => List.filled(new Random().nextInt(10), {
         'id': faker.guid.guid(),
         'question': faker.randomGenerator.string(50),
         'didAnswer': faker.randomGenerator.boolean(),
@@ -30,6 +32,8 @@ void main() {
 
   void mockHttpData(List<Map> data) =>
       mockRequestCall().thenAnswer((_) async => data);
+
+  void mockHttpError(HttpError error) => mockRequestCall().thenThrow(error);
 
   setUp(() {
     url = faker.internet.httpUrl();
@@ -66,6 +70,14 @@ void main() {
     mockHttpData([
       {'invalid_data': 'invalid_key'}
     ]);
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 404', () async {
+    mockHttpError(HttpError.notFound);
+
     final future = sut.load();
 
     expect(future, throwsA(DomainError.unexpected));
