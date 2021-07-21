@@ -212,5 +212,29 @@ void main() {
             },
           ));
     });
+
+    test('should return empty map if post returns 200 with no data', () async {
+      mockResponse(200, body: '');
+
+      final response = await sut.request(url: url.toString(), method: 'get');
+
+      expect(response, {});
+    });
+
+    test('should return empty map if post returns 204', () async {
+      mockResponse(204, body: '');
+
+      final response = await sut.request(url: url.toString(), method: 'get');
+
+      expect(response, {});
+    });
+
+    test('should return empty map if post returns 204 with data', () async {
+      mockResponse(204);
+
+      final response = await sut.request(url: url.toString(), method: 'get');
+
+      expect(response, {});
+    });
   });
 }
