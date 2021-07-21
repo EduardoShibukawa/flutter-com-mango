@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -82,9 +83,25 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('Should throw UnexpectedError if HttpClient returns 500', () async {
+    mockHttpError(HttpError.serverError);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw AccessDeniedError if HttpClient returns 403', () async {
+    mockHttpError(HttpError.forbidden);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.accessDenied));
+  });
 }
 
-class RemoteLoadSurveys {
+class RemoteLoadSurveys implements LoadSurveys {
   late String url;
   late HttpClient<List<Map>> httpClient;
 
@@ -100,8 +117,10 @@ class RemoteLoadSurveys {
       return httpResponse
           .map((json) => RemoteSurveyModel.fromJson(json).toEntity())
           .toList();
-    } on HttpError {
-      throw DomainError.unexpected;
+    } on HttpError catch (error) {
+      throw error == HttpError.forbidden
+          ? DomainError.accessDenied
+          : DomainError.unexpected;
     }
   }
 }
