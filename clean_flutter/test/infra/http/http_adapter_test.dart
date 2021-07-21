@@ -158,12 +158,47 @@ void main() {
       expect(future, throwsA(HttpError.badRequest));
     });
 
-        test('should return ServerError if post throws', () async {
+    test('should return ServerError if post throws', () async {
       mockError();
 
       final future = sut.request(url: url.toString(), method: 'post');
 
       expect(future, throwsA(HttpError.serverError));
+    });
+  });
+
+  group('When call get', () {
+    When mockRequest() => when(() => client.get(url,
+        headers: any(
+          named: 'headers',
+        )));
+
+    void mockResponse(int statusCode,
+        {String body = '{"any_key":"any_value"}'}) {
+      mockRequest().thenAnswer((_) async => Response(body, statusCode));
+    }
+
+    void mockError() {
+      mockRequest().thenThrow(Exception());
+    }
+
+    setUp(() {
+      mockResponse(200);
+    });
+
+    test('should be called correct values', () async {
+      await sut.request(
+        url: url.toString(),
+        method: 'get',
+      );
+
+      verify(() => client.get(
+            url,
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json'
+            },
+          ));
     });
   });
 }
