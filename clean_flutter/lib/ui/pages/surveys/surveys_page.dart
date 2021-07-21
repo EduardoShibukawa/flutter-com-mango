@@ -21,21 +21,8 @@ class SurveysPage extends StatelessWidget {
           R.strings.surveys,
         ),
       ),
-      body: StreamBuilder<List<SurveyViewModel>>(
-        stream: presenter.loadSurveyStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Column(
-              children: [
-                Text(snapshot.error!.toString()),
-                TextButton(
-                  onPressed: null,
-                  child: Text(R.strings.reload),
-                ),
-              ],
-            );
-          }
-
+      body: Builder(
+        builder: (context) {
           presenter.isLoadingStream.listen((isLoading) {
             if (isLoading) {
               showLoading(context);
@@ -44,19 +31,38 @@ class SurveysPage extends StatelessWidget {
             }
           });
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: CarouselSlider(
-              options: CarouselOptions(
-                enlargeCenterPage: true,
-                aspectRatio: 1,
-              ),
-              items: [
-                SurveyItem(),
-                SurveyItem(),
-                SurveyItem(),
-              ],
-            ),
+          return StreamBuilder<List<SurveyViewModel>>(
+            stream: presenter.loadSurveyStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Column(
+                  children: [
+                    Text(snapshot.error!.toString()),
+                    TextButton(
+                      onPressed: null,
+                      child: Text(R.strings.reload),
+                    ),
+                  ],
+                );
+              } else if (snapshot.hasData) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      enlargeCenterPage: true,
+                      aspectRatio: 1,
+                    ),
+                    items: snapshot.data!
+                        .map((viewModel) => SurveyItem(viewModel))
+                        .toList(),
+                  ),
+                );
+              }
+
+              return SizedBox(
+                height: 0,
+              );
+            },
           );
         },
       ),
