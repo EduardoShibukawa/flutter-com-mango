@@ -7,17 +7,23 @@ import 'package:clean_flutter/data/http/http.dart';
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
-  test('Should call HttpClient with correct values', () async {
-    final url = faker.internet.httpUrl();
-    final httpClient = HttpClientSpy();
-    final sut = RemoteLoadSurveys(url: url, httpClient: httpClient);
+  late String url;
+  late HttpClient httpClient;
+  late RemoteLoadSurveys sut;
+
+  setUp(() {
+    url = faker.internet.httpUrl();
+    httpClient = HttpClientSpy();
+    sut = RemoteLoadSurveys(url: url, httpClient: httpClient);
 
     when(() => httpClient.request(
           url: any(named: 'url'),
           method: any(named: 'method'),
           body: any(named: 'body'),
         )).thenAnswer((_) async => {});
+  });
 
+  test('Should call HttpClient with correct values', () async {
     await sut.load();
 
     verify(() => httpClient.request(url: url, method: 'get'));
