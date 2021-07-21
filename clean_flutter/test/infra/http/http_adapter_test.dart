@@ -253,5 +253,45 @@ void main() {
 
       expect(future, throwsA(HttpError.badRequest));
     });
+
+    test('should return Unauthorized if post returns 401', () async {
+      mockResponse(401);
+
+      final future = sut.request(url: url.toString(), method: 'get');
+
+      expect(future, throwsA(HttpError.unauthorized));
+    });
+
+    test('should return Unauthorized if post returns 401', () async {
+      mockResponse(401);
+
+      final future = sut.request(url: url.toString(), method: 'get');
+
+      expect(future, throwsA(HttpError.unauthorized));
+    });
+
+    test('should return Unauthorized if post returns 403', () async {
+      mockResponse(403);
+
+      final future = sut.request(url: url.toString(), method: 'get');
+
+      expect(future, throwsA(HttpError.forbidden));
+    });
+
+    test('should return Unauthorized if post returns 404', () async {
+      mockResponse(404);
+
+      final future = sut.request(url: url.toString(), method: 'get');
+
+      expect(future, throwsA(HttpError.notFound));
+    });
+
+    test('should return ServerErrpr if post returns 500', () async {
+      mockResponse(400);
+
+      final future = sut.request(url: url.toString(), method: 'get');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
   });
 }
