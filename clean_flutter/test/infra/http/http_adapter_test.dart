@@ -200,5 +200,17 @@ void main() {
             },
           ));
     });
+
+    test('should return data if post returns 200', () async {
+      await sut.request(url: url.toString(), method: 'get');
+
+      verify(() => client.get(
+            url,
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json'
+            },
+          ));
+    });
   });
 }
