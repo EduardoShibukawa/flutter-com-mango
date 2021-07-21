@@ -15,17 +15,6 @@
             "type": "dart",
             "request": "launch",
             "program": "./test/"
-        },
-        {
-            "name": "clean_flutter",
-            "request": "launch",
-            "type": "dart"
-        },
-        {
-            "name": "clean_flutter (profile mode)",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "profile"
         }
     ]
 }
