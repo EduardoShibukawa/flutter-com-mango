@@ -293,5 +293,13 @@ void main() {
 
       expect(future, throwsA(HttpError.badRequest));
     });
+
+    test('should return ServerError if post throws', () async {
+      mockError();
+
+      final future = sut.request(url: url.toString(), method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
   });
 }
