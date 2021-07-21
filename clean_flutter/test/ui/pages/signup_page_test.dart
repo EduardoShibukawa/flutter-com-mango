@@ -89,21 +89,6 @@ void main() {
     closeStreams();
   });
 
-  testWidgets('Should load with correct initial state',
-      (WidgetTester tester) async {
-    await loadPage(tester);
-
-    expectNoErrosInTextField('Nome');
-    expectNoErrosInTextField('Email');
-    expectNoErrosInTextField('Senha');
-    expectNoErrosInTextField('Confirmar senha');
-
-    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
-
-    expect(button.onPressed, null);
-    expect(find.byType(CircularProgressIndicator), findsNothing);
-  });
-
   testWidgets('Should call validate with correct values',
       (WidgetTester tester) async {
     await loadPage(tester);
