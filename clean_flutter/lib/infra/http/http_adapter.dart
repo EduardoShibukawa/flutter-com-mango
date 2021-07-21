@@ -3,12 +3,12 @@ import 'package:http/http.dart';
 
 import '../../data/http/http.dart';
 
-class HttpAdapter implements HttpClient {
+class HttpAdapter<ResponseType> implements HttpClient<ResponseType> {
   final Client client;
 
   HttpAdapter(this.client);
 
-  Future<Map> request({
+  Future<ResponseType> request({
     required String url,
     required String method,
     Map? body,
@@ -33,7 +33,7 @@ class HttpAdapter implements HttpClient {
     return _handleResponse(response);
   }
 
-  Map _handleResponse(Response response) {
+  dynamic _handleResponse(Response response) {
     switch (response.statusCode) {
       case 200:
         return response.body.isNotEmpty ? jsonDecode(response.body) : {};

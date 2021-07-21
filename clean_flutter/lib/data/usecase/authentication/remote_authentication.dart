@@ -6,7 +6,7 @@ import '../../../domain/helpers/helpers.dart';
 import '../../../domain/usecases/usecases.dart';
 
 class RemoteAuthentication implements Authentication {
-  HttpClient httpClient;
+  HttpClient<Map> httpClient;
   String url;
 
   RemoteAuthentication({required this.httpClient, required this.url});
