@@ -12,7 +12,7 @@ void main() {
   // Getx Provider bug
   final previousCheck = Provider.debugCheckInvalidValueType;
   Provider.debugCheckInvalidValueType = <T>(T value) {
-    if (value is LoginPresenter) return;
+    if (value is Presenter) return;
     previousCheck!<T>(value);
   };
 
@@ -28,7 +28,7 @@ class App extends StatelessWidget {
       title: '4Dev',
       debugShowCheckedModeBanner: false,
       theme: makeAppTheme(),
-      initialRoute: '/login',
+      initialRoute: '/',
       getPages: [
         GetPage(
           name: '/',
@@ -38,6 +38,11 @@ class App extends StatelessWidget {
         GetPage(
           name: '/login',
           page: makeLoginPage,
+          transition: Transition.fadeIn,
+        ),
+        GetPage(
+          name: '/signup',
+          page: makeSignUpPage,
           transition: Transition.fadeIn,
         ),
         GetPage(

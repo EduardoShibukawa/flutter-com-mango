@@ -1,6 +1,7 @@
+import '../pages.dart';
 import '../../helpers/errors/errors.dart';
 
-abstract class LoginPresenter {
+abstract class LoginPresenter extends Presenter {
   Stream<UIError?> get emailErrorStream;
   Stream<UIError?> get passwordErrorStream;
   Stream<UIError?> get mainErrorStream;

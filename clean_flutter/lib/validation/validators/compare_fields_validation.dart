@@ -1,9 +1,13 @@
+import 'package:equatable/equatable.dart';
+
 import '../../presentation/presenters/presenters.dart';
 import '../protocols/protocols.dart';
 
-class CompareFieldsValidation implements FieldValidation {
+class CompareFieldsValidation extends Equatable implements FieldValidation {
   final String field;
   final String fieldToCompare;
+
+  List<Object> get props => [field, fieldToCompare];
 
   CompareFieldsValidation({required this.field, required this.fieldToCompare});
 
