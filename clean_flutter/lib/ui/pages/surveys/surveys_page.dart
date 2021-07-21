@@ -21,8 +21,21 @@ class SurveysPage extends StatelessWidget {
           R.strings.surveys,
         ),
       ),
-      body: Builder(
-        builder: (context) {
+      body: StreamBuilder<List<SurveyViewModel>>(
+        stream: presenter.loadSurveyStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Column(
+              children: [
+                Text(snapshot.error!.toString()),
+                TextButton(
+                  onPressed: null,
+                  child: Text(R.strings.reload),
+                ),
+              ],
+            );
+          }
+
           presenter.isLoadingStream.listen((isLoading) {
             if (isLoading) {
               showLoading(context);
