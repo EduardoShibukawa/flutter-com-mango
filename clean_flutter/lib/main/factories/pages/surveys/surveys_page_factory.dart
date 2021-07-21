@@ -6,6 +6,10 @@ class Stub implements SurveysPresenter {
     // TODO: implement loadData
     throw UnimplementedError();
   }
+
+  @override
+  // TODO: implement isLoadingStream
+  Stream<bool> get isLoadingStream => throw UnimplementedError();
 }
 
 SurveysPage makeSurveyPage() {
