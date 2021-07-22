@@ -32,16 +32,21 @@ void main() {
 
   void mockTokenError() => mockTokenCall().thenThrow(Exception());
 
+  When mockHttpResponcall() => when(() => httpClient.request(
+        url: any(named: 'url'),
+        method: any(named: 'method'),
+        body: any(named: 'body'),
+        headers: any(named: 'headers'),
+      ));
+
   void mockHttpResponse() {
     httpResponse = faker.randomGenerator.string(50);
 
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-          headers: any(named: 'headers'),
-        )).thenAnswer((_) async => httpResponse);
+    mockHttpResponcall().thenAnswer((_) async => httpResponse);
   }
+
+  void mockHttpResponseError(HttpError error) =>
+      mockHttpResponcall().thenThrow(error);
 
   setUp(() {
     httpClient = HttpClientSpy();
@@ -106,6 +111,14 @@ void main() {
     final future = sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
+  });
+
+  test('Should rethrow if decoratee throws', () async {
+    mockHttpResponseError(HttpError.badRequest);
+
+    final future = sut.request(url: url, method: method, body: body);
+
+    expect(future, throwsA(HttpError.badRequest));
   });
 }
 
