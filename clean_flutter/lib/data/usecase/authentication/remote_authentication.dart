@@ -6,7 +6,7 @@ import '../../../domain/helpers/helpers.dart';
 import '../../../domain/usecases/usecases.dart';
 
 class RemoteAuthentication implements Authentication {
-  HttpClient<Map> httpClient;
+  HttpClient httpClient;
   String url;
 
   RemoteAuthentication({required this.httpClient, required this.url});
@@ -15,10 +15,11 @@ class RemoteAuthentication implements Authentication {
     final body = RemoteAuthenticationParams.fromDomain(params).toJson();
     try {
       final httpResponse = await this.httpClient.request(
-            url: url,
-            method: 'post',
-            body: body,
-          );
+                url: url,
+                method: 'post',
+                body: body,
+              ) ??
+          {};
 
       return RemoteAccountModel.fromJson(httpResponse).toEntity();
     } on HttpError catch (error) {

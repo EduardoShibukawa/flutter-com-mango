@@ -3,12 +3,12 @@ import 'package:http/http.dart';
 
 import '../../data/http/http.dart';
 
-class HttpAdapter<ResponseType> implements HttpClient<ResponseType> {
+class HttpAdapter implements HttpClient {
   final Client client;
 
   HttpAdapter(this.client);
 
-  Future<ResponseType> request({
+  Future<dynamic> request({
     required String url,
     required String method,
     Map? headers,
@@ -47,9 +47,9 @@ class HttpAdapter<ResponseType> implements HttpClient<ResponseType> {
   dynamic _handleResponse(Response response) {
     switch (response.statusCode) {
       case 200:
-        return response.body.isNotEmpty ? jsonDecode(response.body) : {};
+        return response.body.isNotEmpty ? jsonDecode(response.body) : null;
       case 204:
-        return {};
+        return null;
       case 400:
         throw HttpError.badRequest;
       case 401:

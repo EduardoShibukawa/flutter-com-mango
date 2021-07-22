@@ -1,5 +1,7 @@
+import 'package:clean_flutter/ui/helpers/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
 import 'factories/factories.dart';
@@ -24,6 +26,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    initializeDateFormatting(R.locale.toString(), null);
+
     return GetMaterialApp(
       title: '4Dev',
       debugShowCheckedModeBanner: false,

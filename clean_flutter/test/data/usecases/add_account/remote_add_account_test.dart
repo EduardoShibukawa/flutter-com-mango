@@ -7,11 +7,11 @@ import 'package:clean_flutter/data/usecase/usecase.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 
-class MockHttpClient extends Mock implements HttpClient<Map> {}
+class MockHttpClient extends Mock implements HttpClient {}
 
 void main() {
   late RemoteAddAccount sut;
-  late HttpClient<Map> httpClient;
+  late HttpClient httpClient;
   late String url;
   late AddAccountParams params;
 

@@ -7,7 +7,7 @@ import '../../../domain/entities/entities.dart';
 import '../../../domain/usecases/usecases.dart';
 
 class RemoteAddAccount implements AddAccount {
-  HttpClient<Map> httpClient;
+  HttpClient httpClient;
   String url;
 
   RemoteAddAccount({required this.httpClient, required this.url});
@@ -16,10 +16,11 @@ class RemoteAddAccount implements AddAccount {
     final body = RemoteAddAccountParams.fromDomain(params).toJson();
     try {
       final httpResponse = await this.httpClient.request(
-            url: url,
-            method: 'post',
-            body: body,
-          );
+                url: url,
+                method: 'post',
+                body: body,
+              ) ??
+          {};
 
       return RemoteAccountModel.fromJson(httpResponse).toEntity();
     } on HttpError catch (error) {

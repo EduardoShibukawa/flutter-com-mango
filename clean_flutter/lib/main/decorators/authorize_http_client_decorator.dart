@@ -1,7 +1,7 @@
 import '../../data/cache/cache.dart';
 import '../../data/http/http.dart';
 
-class AuthorizeHttpClientDecorator<ResponseType> implements HttpClient {
+class AuthorizeHttpClientDecorator implements HttpClient {
   final HttpClient decoratee;
   final FetchSecureCacheStorage fetchSecureCacheStorage;
 
@@ -10,7 +10,7 @@ class AuthorizeHttpClientDecorator<ResponseType> implements HttpClient {
     required this.decoratee,
   });
 
-  Future<ResponseType> request({
+  Future<dynamic> request({
     required String url,
     required String method,
     Map? headers,
@@ -27,7 +27,13 @@ class AuthorizeHttpClientDecorator<ResponseType> implements HttpClient {
     final authorizedHeaders = headers ?? {}
       ..addAll({'x-access-token': token});
 
-    return await decoratee.request(
-        url: url, method: method, body: body, headers: authorizedHeaders);
+    return Future.value(
+      await decoratee.request(
+        url: url,
+        method: method,
+        body: body,
+        headers: authorizedHeaders,
+      ),
+    );
   }
 }
