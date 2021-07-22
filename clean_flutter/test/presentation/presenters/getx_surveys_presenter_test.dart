@@ -48,7 +48,7 @@ void main() {
 
   setUp(() {
     loadSurveys = LoadSurveysSpy();
-    sut = GetxSurveysPresenter(loadSurveys);
+    sut = GetxSurveysPresenter(loadSurveys: loadSurveys);
     mockLoadSurveys(mockValidData());
   });
 

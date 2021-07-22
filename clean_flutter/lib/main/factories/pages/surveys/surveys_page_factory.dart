@@ -1,21 +1,7 @@
+import 'package:clean_flutter/main/factories/pages/pages.dart';
+
 import '../../../../ui/pages/pages.dart';
 
-class Stub implements SurveysPresenter {
-  @override
-  Future<void> loadData() {
-    // TODO: implement loadData
-    throw UnimplementedError();
-  }
-
-  @override
-  // TODO: implement isLoadingStream
-  Stream<bool> get isLoadingStream => throw UnimplementedError();
-
-  @override
-  // TODO: implement loadSurveyStream
-  Stream<List<SurveyViewModel>> get surveysStream => throw UnimplementedError();
-}
-
 SurveysPage makeSurveyPage() {
-  return SurveysPage(new Stub());
+  return SurveysPage(makeSGetxSurveysPresenter());
 }

@@ -16,7 +16,7 @@ class GetxSurveysPresenter implements SurveysPresenter {
   Stream<List<SurveyViewModel>> get surveysStream =>
       _surveys.stream.map((e) => e!);
 
-  GetxSurveysPresenter(this.loadSurveys);
+  GetxSurveysPresenter({required this.loadSurveys});
 
   Future<void> loadData() async {
     try {
