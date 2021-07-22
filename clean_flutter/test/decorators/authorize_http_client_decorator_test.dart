@@ -1,6 +1,7 @@
 import 'package:clean_flutter/data/cache/fetch_secure_cache_storage.dart';
 import 'package:clean_flutter/data/http/http_client.dart';
 import 'package:faker/faker.dart';
+import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -18,11 +19,23 @@ void main() {
   late String method;
   late Map body;
   late String token;
+  late String httpResponse;
 
   void mockToken() {
     token = faker.guid.guid();
     when(() => fetchSecureCacheStorage.fetchSecure(any()))
         .thenAnswer((_) async => token);
+  }
+
+  void mockHttpResponse() {
+    httpResponse = faker.randomGenerator.string(50);
+
+    when(() => httpClient.request(
+          url: any(named: 'url'),
+          method: any(named: 'method'),
+          body: any(named: 'body'),
+          headers: any(named: 'headers'),
+        )).thenAnswer((_) async => httpResponse);
   }
 
   setUp(() {
@@ -38,12 +51,7 @@ void main() {
     body = {'any_key': 'any_value'};
 
     mockToken();
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-          headers: any(named: 'headers'),
-        )).thenAnswer((_) async => {});
+    mockHttpResponse();
   });
 
   test('Should call FetchSecureCacheStorage with correct key', () async {
@@ -79,9 +87,15 @@ void main() {
           },
         )).called(1);
   });
+
+  test('Should return same result as decoratee', () async {
+    final response = await sut.request(url: url, method: method, body: body);
+
+    expect(response, httpResponse);
+  });
 }
 
-class AuthorizeHttpClientDecorator<ResponseType> {
+class AuthorizeHttpClientDecorator<ResponseType> implements HttpClient {
   final HttpClient decoratee;
   final FetchSecureCacheStorage fetchSecureCacheStorage;
 
@@ -90,7 +104,7 @@ class AuthorizeHttpClientDecorator<ResponseType> {
     required this.decoratee,
   });
 
-  Future<void>? request({
+  Future<ResponseType> request({
     required String url,
     required String method,
     Map? headers,
@@ -100,7 +114,7 @@ class AuthorizeHttpClientDecorator<ResponseType> {
     final authorizedHeaders = headers ?? {}
       ..addAll({'x-access-token': token});
 
-    await decoratee.request(
+    return await decoratee.request(
         url: url, method: method, body: body, headers: authorizedHeaders);
   }
 }
