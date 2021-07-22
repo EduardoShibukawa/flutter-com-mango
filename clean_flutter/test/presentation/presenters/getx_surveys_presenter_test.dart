@@ -1,15 +1,14 @@
+import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:faker/faker.dart';
-import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter/domain/entities/survey_entity.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
+import 'package:clean_flutter/presentation/presenters/presenters.dart';
 import 'package:clean_flutter/ui/helpers/helpers.dart';
-import 'package:clean_flutter/ui/pages/pages.dart';
 
 class LoadSurveysSpy extends Mock implements LoadSurveys {}
 
@@ -90,41 +89,4 @@ void main() {
 
     await sut.loadData();
   });
-}
-
-class GetxSurveysPresenter {
-  final LoadSurveys loadSurveys;
-
-  final _isLoading = true.obs;
-  final _surveys = Rx<List<SurveyViewModel>>([]);
-
-  Stream<bool> get isLoadingStream => _isLoading.map((e) => e!);
-  Stream<List<SurveyViewModel>> get surveysStream =>
-      _surveys.stream.map((e) => e!);
-
-  GetxSurveysPresenter(this.loadSurveys);
-
-  Future<void> loadData() async {
-    try {
-      _isLoading.value = true;
-      final surveys = await loadSurveys.load();
-      _surveys.value = surveys
-          .map(
-            (s) => SurveyViewModel(
-              id: s.id,
-              question: s.question,
-              date: Intl.withLocale(
-                R.locale.toString(),
-                () => DateFormat('dd MMM yyyy').format(s.dateTime),
-              ),
-              didAnswer: s.didAnswer,
-            ),
-          )
-          .toList();
-    } on DomainError {
-      _surveys.addError(UIError.unexpected.description, StackTrace.current);
-    } finally {
-      _isLoading.value = false;
-    }
-  }
 }
