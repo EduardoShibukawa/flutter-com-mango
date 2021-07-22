@@ -11,12 +11,15 @@ class HttpAdapter<ResponseType> implements HttpClient<ResponseType> {
   Future<ResponseType> request({
     required String url,
     required String method,
+    Map? headers,
     Map? body,
   }) async {
-    final headers = {
-      'content-type': 'application/json',
-      'accept': 'application/json'
-    };
+    final Map<String, String> defaulHeader =
+        headers?.cast<String, String>() ?? {}
+          ..addAll({
+            'content-type': 'application/json',
+            'accept': 'application/json',
+          });
     var jsonBody = body != null ? jsonEncode(body) : null;
 
     var response = Response('', 500);
@@ -25,13 +28,13 @@ class HttpAdapter<ResponseType> implements HttpClient<ResponseType> {
       if (method == 'post') {
         response = await client.post(
           Uri.parse(url),
-          headers: headers,
+          headers: defaulHeader,
           body: jsonBody,
         );
       } else if (method == 'get') {
         response = await client.get(
           Uri.parse(url),
-          headers: headers,
+          headers: defaulHeader,
         );
       }
     } catch (error) {
