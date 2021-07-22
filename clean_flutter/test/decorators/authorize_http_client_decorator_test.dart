@@ -1,10 +1,11 @@
+import 'package:faker/faker.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:test/test.dart';
+
 import 'package:clean_flutter/data/cache/fetch_secure_cache_storage.dart';
 import 'package:clean_flutter/data/http/http.dart';
 import 'package:clean_flutter/data/http/http_client.dart';
-import 'package:faker/faker.dart';
-import 'package:http/http.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
+import 'package:clean_flutter/main/decorators/decorators.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
@@ -120,35 +121,4 @@ void main() {
 
     expect(future, throwsA(HttpError.badRequest));
   });
-}
-
-class AuthorizeHttpClientDecorator<ResponseType> implements HttpClient {
-  final HttpClient decoratee;
-  final FetchSecureCacheStorage fetchSecureCacheStorage;
-
-  AuthorizeHttpClientDecorator({
-    required this.fetchSecureCacheStorage,
-    required this.decoratee,
-  });
-
-  Future<ResponseType> request({
-    required String url,
-    required String method,
-    Map? headers,
-    Map? body,
-  }) async {
-    late String token;
-
-    try {
-      token = await fetchSecureCacheStorage.fetchSecure('token');
-    } catch (_) {
-      throw HttpError.forbidden;
-    }
-
-    final authorizedHeaders = headers ?? {}
-      ..addAll({'x-access-token': token});
-
-    return await decoratee.request(
-        url: url, method: method, body: body, headers: authorizedHeaders);
-  }
 }
