@@ -4,5 +4,5 @@ import '../../../data/usecase/load_current_account/local_load_current_account.da
 
 LoadCurrentAccount makeLocalLoadCurrentAccount() {
   return LocalLoadCurrentAccount(
-      fetchSecureCacheStorage: makeLocalStorageAdapter());
+      fetchSecureCacheStorage: makeSecureStorageAdapter());
 }
