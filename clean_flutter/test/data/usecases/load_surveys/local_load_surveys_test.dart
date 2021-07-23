@@ -156,12 +156,17 @@ void main() {
     void mockFetch(List<Map<String, String>>? data) =>
         mockFetchCall().thenAnswer((_) async => data);
 
+    When mockDeleteCall() => when(() => cacheStorage.delete('surveys'));
+
+    void mockDelete() => mockDeleteCall().thenAnswer((_) async => {});
+
     setUp(() {
       cacheStorage = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorage);
 
       data = mockValidData();
       mockFetch(data);
+      mockDelete();
     });
     test('Should call FectchCacheStorage with correct key', () async {
       await sut.validate();
