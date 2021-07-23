@@ -1,9 +1,11 @@
-import 'package:clean_flutter/data/models/models.dart';
-import 'package:clean_flutter/domain/entities/survey_entity.dart';
-import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
+
+import 'package:clean_flutter/data/cache/cache.dart';
+import 'package:clean_flutter/data/usecase/usecase.dart';
+import 'package:clean_flutter/domain/entities/survey_entity.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 
 class FetchCacheStorageSpy extends Mock implements FetchCacheStorage {}
 
@@ -126,28 +128,4 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
-}
-
-abstract class FetchCacheStorage {
-  Future<dynamic> fetch(String key);
-}
-
-class LocalLoadSurveys {
-  final FetchCacheStorage fetchCacheStorage;
-
-  LocalLoadSurveys({required this.fetchCacheStorage});
-
-  Future<List<SurveyEntity>> load() async {
-    try {
-      final data = await fetchCacheStorage.fetch('surveys');
-      if (data?.isEmpty ?? true) throw DomainError.unexpected;
-
-      return data
-          .map<SurveyEntity>(
-              (json) => LocalSurveyModel.fromJson(json).toEntity())
-          .toList();
-    } catch (_) {
-      throw DomainError.unexpected;
-    }
-  }
 }
