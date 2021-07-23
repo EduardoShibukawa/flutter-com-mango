@@ -4,12 +4,16 @@ import 'package:test/test.dart';
 class FetchCacheStorageSpy extends Mock implements FetchCacheStorage {}
 
 void main() {
-  test('Should call FectchCacheStorage with correct key', () async {
-    final fetchCacheStorage = FetchCacheStorageSpy();
-    final sut = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorage);
+  late FetchCacheStorage fetchCacheStorage;
+  late LocalLoadSurveys sut;
+
+  setUp(() {
+    fetchCacheStorage = FetchCacheStorageSpy();
+    sut = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorage);
 
     when(() => fetchCacheStorage.fetch('surveys')).thenAnswer((_) async => {});
-
+  });
+  test('Should call FectchCacheStorage with correct key', () async {
     await sut.load();
 
     verify(() => fetchCacheStorage.fetch('surveys')).called(1);
