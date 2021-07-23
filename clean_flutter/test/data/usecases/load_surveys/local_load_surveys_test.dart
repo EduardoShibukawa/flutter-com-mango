@@ -11,7 +11,7 @@ class CacheStorageSpy extends Mock implements CacheStorage {}
 
 void main() {
   group('Load', () {
-    late CacheStorage fetchCacheStorage;
+    late CacheStorage cacheStorage;
     late LocalLoadSurveys sut;
     late List<Map<String, String>> data;
 
@@ -30,7 +30,7 @@ void main() {
           }
         ];
 
-    When mockFetchCall() => when(() => fetchCacheStorage.fetch('surveys'));
+    When mockFetchCall() => when(() => cacheStorage.fetch('surveys'));
 
     void mockFetch(List<Map<String, String>>? data) =>
         mockFetchCall().thenAnswer((_) async => data);
@@ -38,8 +38,8 @@ void main() {
     void mockFetchError() => mockFetchCall().thenThrow(Exception());
 
     setUp(() {
-      fetchCacheStorage = CacheStorageSpy();
-      sut = LocalLoadSurveys(cacheStorage: fetchCacheStorage);
+      cacheStorage = CacheStorageSpy();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorage);
 
       data = mockValidData();
       mockFetch(data);
@@ -47,7 +47,7 @@ void main() {
     test('Should call FectchCacheStorage with correct key', () async {
       await sut.load();
 
-      verify(() => fetchCacheStorage.fetch('surveys')).called(1);
+      verify(() => cacheStorage.fetch('surveys')).called(1);
     });
 
     test('Should return a list of surveys on success', () async {
@@ -94,7 +94,7 @@ void main() {
       expect(future, throwsA(DomainError.unexpected));
     });
 
-    test('Should throw UnexpectedError if cache is incomplete', () async {
+    test('Should throw UnexpectedError if cache is invalid', () async {
       mockFetch([
         {
           'id': faker.guid.guid(),
@@ -109,7 +109,7 @@ void main() {
       expect(future, throwsA(DomainError.unexpected));
     });
 
-    test('Should throw UnexpectedError if cache is invalid', () async {
+    test('Should throw UnexpectedError if cache is incomplete', () async {
       mockFetch([
         {
           'id': faker.guid.guid(),
@@ -122,7 +122,7 @@ void main() {
       expect(future, throwsA(DomainError.unexpected));
     });
 
-    test('Should throw UnexpectedError if cache is invalid', () async {
+    test('Should throw UnexpectedError if cache ithrows', () async {
       mockFetchError();
 
       final future = sut.load();
@@ -132,7 +132,7 @@ void main() {
   });
 
   group('Validate', () {
-    late CacheStorage fetchCacheStorage;
+    late CacheStorage cacheStorage;
     late LocalLoadSurveys sut;
     late List<Map<String, String>> data;
 
@@ -151,14 +151,14 @@ void main() {
           }
         ];
 
-    When mockFetchCall() => when(() => fetchCacheStorage.fetch('surveys'));
+    When mockFetchCall() => when(() => cacheStorage.fetch('surveys'));
 
     void mockFetch(List<Map<String, String>>? data) =>
         mockFetchCall().thenAnswer((_) async => data);
 
     setUp(() {
-      fetchCacheStorage = CacheStorageSpy();
-      sut = LocalLoadSurveys(cacheStorage: fetchCacheStorage);
+      cacheStorage = CacheStorageSpy();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorage);
 
       data = mockValidData();
       mockFetch(data);
@@ -166,7 +166,22 @@ void main() {
     test('Should call FectchCacheStorage with correct key', () async {
       await sut.validate();
 
-      verify(() => fetchCacheStorage.fetch('surveys')).called(1);
+      verify(() => cacheStorage.fetch('surveys')).called(1);
+    });
+
+    test('Should delete cache if it is invalid', () async {
+      mockFetch([
+        {
+          'id': faker.guid.guid(),
+          'question': faker.randomGenerator.string(10),
+          'date': 'invalid_date',
+          'didAnswer': 'false'
+        }
+      ]);
+
+      await sut.validate();
+
+      verify(() => cacheStorage.delete('surveys')).called(1);
     });
   });
 }
