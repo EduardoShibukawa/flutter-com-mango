@@ -130,4 +130,43 @@ void main() {
       expect(future, throwsA(DomainError.unexpected));
     });
   });
+
+  group('Validate', () {
+    late CacheStorage fetchCacheStorage;
+    late LocalLoadSurveys sut;
+    late List<Map<String, String>> data;
+
+    List<Map<String, String>> mockValidData() => [
+          {
+            'id': faker.guid.guid(),
+            'question': faker.randomGenerator.string(10),
+            'date': '2020-07-20T00:00:00Z',
+            'didAnswer': 'false'
+          },
+          {
+            'id': faker.guid.guid(),
+            'question': faker.randomGenerator.string(10),
+            'date': '2019-02-02T00:00:00Z',
+            'didAnswer': 'true'
+          }
+        ];
+
+    When mockFetchCall() => when(() => fetchCacheStorage.fetch('surveys'));
+
+    void mockFetch(List<Map<String, String>>? data) =>
+        mockFetchCall().thenAnswer((_) async => data);
+
+    setUp(() {
+      fetchCacheStorage = CacheStorageSpy();
+      sut = LocalLoadSurveys(cacheStorage: fetchCacheStorage);
+
+      data = mockValidData();
+      mockFetch(data);
+    });
+    test('Should call FectchCacheStorage with correct key', () async {
+      await sut.validate();
+
+      verify(() => fetchCacheStorage.fetch('surveys')).called(1);
+    });
+  });
 }
