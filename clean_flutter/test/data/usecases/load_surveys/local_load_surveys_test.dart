@@ -1,5 +1,6 @@
 import 'package:clean_flutter/data/models/models.dart';
 import 'package:clean_flutter/domain/entities/survey_entity.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -26,9 +27,10 @@ void main() {
         }
       ];
 
+  When mockFetchCall() => when(() => fetchCacheStorage.fetch('surveys'));
+
   void mockFetch(List<Map<String, String>> data) =>
-      when(() => fetchCacheStorage.fetch('surveys'))
-          .thenAnswer((_) async => data);
+      mockFetchCall().thenAnswer((_) async => data);
 
   setUp(() {
     fetchCacheStorage = FetchCacheStorageSpy();
@@ -63,6 +65,14 @@ void main() {
       )
     ]);
   });
+
+  test('Should throw UnexpectedError if cache is empty', () async {
+    mockFetch([]);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
 
 abstract class FetchCacheStorage {
@@ -75,9 +85,11 @@ class LocalLoadSurveys {
   LocalLoadSurveys({required this.fetchCacheStorage});
 
   Future<List<SurveyEntity>> load() async {
-    final json = await fetchCacheStorage.fetch('surveys');
+    final data = await fetchCacheStorage.fetch('surveys');
 
-    return json
+    if (data.isEmpty()) throw DomainError.unexpected;
+
+    return data
         .map<SurveyEntity>((json) => LocalSurveyModel.fromJson(json).toEntity())
         .toList();
   }
