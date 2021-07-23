@@ -122,7 +122,7 @@ void main() {
       expect(future, throwsA(DomainError.unexpected));
     });
 
-    test('Should throw UnexpectedError if cache ithrows', () async {
+    test('Should throw UnexpectedError if cache throws', () async {
       mockFetchError();
 
       final future = sut.load();
@@ -156,6 +156,8 @@ void main() {
     void mockFetch(List<Map<String, String>>? data) =>
         mockFetchCall().thenAnswer((_) async => data);
 
+    void mockFetchError() => mockFetchCall().thenThrow(Exception());
+
     When mockDeleteCall() => when(() => cacheStorage.delete('surveys'));
 
     void mockDelete() => mockDeleteCall().thenAnswer((_) async => {});
@@ -187,6 +189,27 @@ void main() {
       await sut.validate();
 
       verify(() => cacheStorage.delete('surveys')).called(1);
+    });
+
+    test('Should delete cache if it is incomplete', () async {
+      mockFetch([
+        {
+          'id': faker.guid.guid(),
+          'question': faker.randomGenerator.string(10),
+        }
+      ]);
+
+      final future = sut.load();
+
+      expect(future, throwsA(DomainError.unexpected));
+    });
+
+    test('Should delete if cache throws', () async {
+      mockFetchError();
+
+      final future = sut.load();
+
+      expect(future, throwsA(DomainError.unexpected));
     });
   });
 }
