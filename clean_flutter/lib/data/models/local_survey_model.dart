@@ -14,14 +14,19 @@ class LocalSurveyModel {
     required this.didAnswer,
   });
 
-  factory LocalSurveyModel.fromJson(Map json) {
-    return LocalSurveyModel(
-      id: json['id'],
-      question: json['question'],
-      date: DateTime.parse(json['date']),
-      didAnswer: json['didAnswer'].toLowerCase() == 'true',
-    );
-  }
+  factory LocalSurveyModel.fromJson(Map json) => LocalSurveyModel(
+        id: json['id'],
+        question: json['question'],
+        date: DateTime.parse(json['date']),
+        didAnswer: json['didAnswer'].toLowerCase() == 'true',
+      );
+
+  factory LocalSurveyModel.fromEntity(SurveyEntity entity) => LocalSurveyModel(
+        id: entity.id,
+        question: entity.question,
+        date: entity.dateTime,
+        didAnswer: entity.didAnswer,
+      );
 
   SurveyEntity toEntity() => SurveyEntity(
         id: id,
@@ -29,4 +34,11 @@ class LocalSurveyModel {
         dateTime: date,
         didAnswer: didAnswer,
       );
+
+  Map<String, String> toJson() => {
+        'id': id,
+        'question': question,
+        'date': date.toIso8601String(),
+        'didAnswer': didAnswer.toString(),
+      };
 }
