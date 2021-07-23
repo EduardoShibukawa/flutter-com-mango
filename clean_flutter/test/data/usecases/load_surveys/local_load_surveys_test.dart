@@ -88,6 +88,21 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('Should throw UnexpectedError if cache is invalid', () async {
+    mockFetch([
+      {
+        'id': faker.guid.guid(),
+        'question': faker.randomGenerator.string(10),
+        'date': 'invalid_date',
+        'didAnswer': 'false'
+      }
+    ]);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
 
 abstract class FetchCacheStorage {
@@ -101,11 +116,15 @@ class LocalLoadSurveys {
 
   Future<List<SurveyEntity>> load() async {
     final data = await fetchCacheStorage.fetch('surveys');
+    try {
+      if (data?.isEmpty ?? true) throw DomainError.unexpected;
 
-    if (data?.isEmpty ?? true) throw DomainError.unexpected;
-
-    return data
-        .map<SurveyEntity>((json) => LocalSurveyModel.fromJson(json).toEntity())
-        .toList();
+      return data
+          .map<SurveyEntity>(
+              (json) => LocalSurveyModel.fromJson(json).toEntity())
+          .toList();
+    } catch (_) {
+      throw DomainError.unexpected;
+    }
   }
 }
