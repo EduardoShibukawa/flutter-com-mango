@@ -32,6 +32,8 @@ void main() {
   void mockFetch(List<Map<String, String>>? data) =>
       mockFetchCall().thenAnswer((_) async => data);
 
+  void mockFetchError() => mockFetchCall().thenThrow(Exception());
+
   setUp(() {
     fetchCacheStorage = FetchCacheStorageSpy();
     sut = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorage);
@@ -116,6 +118,14 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('Should throw UnexpectedError if cache is invalid', () async {
+    mockFetchError();
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
 
 abstract class FetchCacheStorage {
@@ -128,8 +138,8 @@ class LocalLoadSurveys {
   LocalLoadSurveys({required this.fetchCacheStorage});
 
   Future<List<SurveyEntity>> load() async {
-    final data = await fetchCacheStorage.fetch('surveys');
     try {
+      final data = await fetchCacheStorage.fetch('surveys');
       if (data?.isEmpty ?? true) throw DomainError.unexpected;
 
       return data
