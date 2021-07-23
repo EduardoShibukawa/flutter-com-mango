@@ -89,13 +89,26 @@ void main() {
     expect(future, throwsA(DomainError.unexpected));
   });
 
-  test('Should throw UnexpectedError if cache is invalid', () async {
+  test('Should throw UnexpectedError if cache is incomplete', () async {
     mockFetch([
       {
         'id': faker.guid.guid(),
         'question': faker.randomGenerator.string(10),
         'date': 'invalid_date',
         'didAnswer': 'false'
+      }
+    ]);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if cache is invalid', () async {
+    mockFetch([
+      {
+        'id': faker.guid.guid(),
+        'question': faker.randomGenerator.string(10),
       }
     ]);
 

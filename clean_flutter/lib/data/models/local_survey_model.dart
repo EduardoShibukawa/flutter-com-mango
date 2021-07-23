@@ -15,12 +15,6 @@ class LocalSurveyModel {
   });
 
   factory LocalSurveyModel.fromJson(Map json) {
-    if (!json.keys
-        .toSet()
-        .containsAll(['id', 'question', 'date', 'didAnswer'])) {
-      throw HttpError.invalidData;
-    }
-
     return LocalSurveyModel(
       id: json['id'],
       question: json['question'],
