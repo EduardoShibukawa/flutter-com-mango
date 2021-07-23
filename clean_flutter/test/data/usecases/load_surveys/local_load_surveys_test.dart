@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -233,6 +235,13 @@ void main() {
           ),
         ];
 
+    When mockSaveCall() => when(
+        () => cacheStorage.save(key: 'surveys', value: any(named: 'value')));
+
+    void mockSave() => mockSaveCall().thenAnswer((_) async => {});
+
+    void mockSaveError() => mockSaveCall().thenThrow(Exception());
+
     setUp(() {
       cacheStorage = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorage);
@@ -261,6 +270,14 @@ void main() {
       await sut.save(surveys);
 
       verify(() => cacheStorage.save(key: 'surveys', value: list)).called(1);
+    });
+
+    test('Should throw UnexpectedError if save throws', () async {
+      mockSaveError();
+
+      final future = sut.save(surveys);
+
+      expect(future, throwsA(DomainError.unexpected));
     });
   });
 }
