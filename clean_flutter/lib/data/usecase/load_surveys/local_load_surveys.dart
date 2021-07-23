@@ -1,9 +1,11 @@
+import 'package:clean_flutter/domain/usecases/usecases.dart';
+
 import '../../../domain/entities/entities.dart';
 import '../../../domain/helpers/helpers.dart';
 import '../../cache/cache.dart';
 import '../../models/models.dart';
 
-class LocalLoadSurveys {
+class LocalLoadSurveys implements LoadSurveys {
   final FetchCacheStorage fetchCacheStorage;
 
   LocalLoadSurveys({required this.fetchCacheStorage});
