@@ -3,5 +3,6 @@ import '../../../../ui/pages/pages.dart';
 import '../../usecases/usecases.dart';
 
 SurveysPresenter makeSGetxSurveysPresenter() {
-  return GetxSurveysPresenter(loadSurveys: makeRemoteLoadSurveys());
+  return GetxSurveysPresenter(
+      loadSurveys: makeRemoteLoadSurveysWithLocalFallback());
 }
