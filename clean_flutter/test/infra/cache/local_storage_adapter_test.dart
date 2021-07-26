@@ -10,18 +10,21 @@ void main() {
   late LocalStorageAdapter sut;
   late String key;
   late dynamic value;
+
   setUp(() {
     localStorage = LocalStorageSpy();
     sut = LocalStorageAdapter(localStorage: localStorage);
     key = faker.randomGenerator.string(5);
     value = faker.randomGenerator.string(50);
 
+    when(() => localStorage.deleteItem(key)).thenAnswer((_) async => {});
     when(() => localStorage.setItem(key, value)).thenAnswer((_) async => {});
   });
 
   test('Should call localStorage with correct values', () async {
     await sut.save(key: key, value: value);
 
+    verify(() => localStorage.deleteItem(key)).called(1);
     verify(() => localStorage.setItem(key, value)).called(1);
   });
 }
@@ -32,6 +35,7 @@ class LocalStorageAdapter {
   LocalStorageAdapter({required this.localStorage});
 
   Future<void> save({required String key, required dynamic value}) async {
+    await localStorage.deleteItem(key);
     await localStorage.setItem(key, value);
   }
 }
