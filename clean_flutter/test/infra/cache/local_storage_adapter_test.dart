@@ -13,17 +13,17 @@ void main() {
   late String key;
   late dynamic value;
 
-  When mockDeleteItemCall() => when(() => localStorage.deleteItem(key));
+  When mockDeleteCall() => when(() => localStorage.deleteItem(key));
 
-  void mockDeleteItem() => mockDeleteItemCall().thenAnswer((_) async => {});
+  void mockDelete() => mockDeleteCall().thenAnswer((_) async => {});
 
-  void mockDeleteItemError() => mockDeleteItemCall().thenThrow(Exception());
+  void mockDeleteError() => mockDeleteCall().thenThrow(Exception());
 
-  When mockSetItemCall() => when(() => localStorage.setItem(key, value));
+  When mockSetCall() => when(() => localStorage.setItem(key, value));
 
-  void mockSetItem() => mockSetItemCall().thenAnswer((_) async => {});
+  void mockSet() => mockSetCall().thenAnswer((_) async => {});
 
-  void mockSetItemError() => mockSetItemCall().thenThrow(Exception());
+  void mockSetError() => mockSetCall().thenThrow(Exception());
 
   setUp(() {
     localStorage = LocalStorageSpy();
@@ -31,30 +31,32 @@ void main() {
     key = faker.randomGenerator.string(5);
     value = faker.randomGenerator.string(50);
 
-    mockDeleteItem();
-    mockSetItem();
+    mockDelete();
+    mockSet();
   });
 
-  test('Should call localStorage with correct values', () async {
-    await sut.save(key: key, value: value);
+  group('Save', () {
+    test('Should call localStorage with correct values', () async {
+      await sut.save(key: key, value: value);
 
-    verify(() => localStorage.deleteItem(key)).called(1);
-    verify(() => localStorage.setItem(key, value)).called(1);
-  });
+      verify(() => localStorage.deleteItem(key)).called(1);
+      verify(() => localStorage.setItem(key, value)).called(1);
+    });
 
-  test('Should throw if deleteItem throws', () async {
-    mockDeleteItemError();
+    test('Should throw if deleteItem throws', () async {
+      mockDeleteError();
 
-    final future = sut.save(key: key, value: value);
+      final future = sut.save(key: key, value: value);
 
-    expect(future, throwsException);
-  });
+      expect(future, throwsException);
+    });
 
-  test('Should throw if setItem throws', () async {
-    mockSetItemError();
+    test('Should throw if setItem throws', () async {
+      mockSetError();
 
-    final future = sut.save(key: key, value: value);
+      final future = sut.save(key: key, value: value);
 
-    expect(future, throwsException);
+      expect(future, throwsException);
+    });
   });
 }
