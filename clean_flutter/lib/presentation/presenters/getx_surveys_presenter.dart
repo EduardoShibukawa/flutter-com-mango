@@ -9,10 +9,8 @@ import '../../ui/pages/pages.dart';
 class GetxSurveysPresenter implements SurveysPresenter {
   final LoadSurveys loadSurveys;
 
-  final _isLoading = true.obs;
   final _surveys = Rx<List<SurveyViewModel>>([]);
 
-  Stream<bool> get isLoadingStream => _isLoading.map((e) => e!);
   Stream<List<SurveyViewModel>> get surveysStream =>
       _surveys.stream.map((e) => e!);
 
@@ -20,7 +18,6 @@ class GetxSurveysPresenter implements SurveysPresenter {
 
   Future<void> loadData() async {
     try {
-      _isLoading.value = true;
       final surveys = await loadSurveys.load();
       _surveys.value = surveys
           .map(
@@ -37,8 +34,6 @@ class GetxSurveysPresenter implements SurveysPresenter {
           .toList();
     } on DomainError {
       _surveys.addError(UIError.unexpected.description, StackTrace.current);
-    } finally {
-      _isLoading.value = false;
     }
   }
 }

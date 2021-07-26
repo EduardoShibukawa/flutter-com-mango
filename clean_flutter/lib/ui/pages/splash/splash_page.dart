@@ -18,7 +18,7 @@ class SplashPage extends StatelessWidget {
       ),
       body: Builder(builder: (context) {
         presenter.navigateToStream.listen((page) {
-          if (page.isNotEmpty) {
+          if (page.isNotEmpty && Get.currentRoute != page) {
             Get.offAllNamed(page);
           }
         });
