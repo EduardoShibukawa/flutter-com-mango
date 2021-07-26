@@ -3,6 +3,8 @@ import 'package:localstorage/localstorage.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_flutter/infra/cache/cache.dart';
+
 class LocalStorageSpy extends Mock implements LocalStorage {}
 
 void main() {
@@ -55,15 +57,4 @@ void main() {
 
     expect(future, throwsException);
   });
-}
-
-class LocalStorageAdapter {
-  final LocalStorage localStorage;
-
-  LocalStorageAdapter({required this.localStorage});
-
-  Future<void> save({required String key, required dynamic value}) async {
-    await localStorage.deleteItem(key);
-    await localStorage.setItem(key, value);
-  }
 }
