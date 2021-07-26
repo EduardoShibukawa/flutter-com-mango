@@ -25,22 +25,28 @@ void main() {
             didAnswer: faker.randomGenerator.boolean())
       ];
 
-  When mockRemoteCall() => when(() => remote.load());
+  When mockRemoteLoadCall() => when(() => remote.load());
 
   void mockRemoteLoad() {
     remoteSurveys = mockSurveys();
-    mockRemoteCall().thenAnswer((_) async => remoteSurveys);
+    mockRemoteLoadCall().thenAnswer((_) async => remoteSurveys);
   }
 
-  void mockRemoteError(DomainError error) => mockRemoteCall().thenThrow(error);
+  void mockRemoteLoadError(DomainError error) =>
+      mockRemoteLoadCall().thenThrow(error);
 
   void mockSaveLocal() =>
       when(() => local.save(any())).thenAnswer((_) async => {});
 
+  When mockLocalLoadCall() => when(() => local.load());
+
   void mockLocalLoad() {
     localSurveys = mockSurveys();
-    when(() => local.load()).thenAnswer((_) async => localSurveys);
+    mockLocalLoadCall().thenAnswer((_) async => localSurveys);
   }
+
+  void mockLocalLoadError() =>
+      mockLocalLoadCall().thenThrow(DomainError.unexpected);
 
   setUp(() {
     remote = RemoteLoadSurveysSpy();
@@ -72,7 +78,7 @@ void main() {
   });
 
   test('Should rethrow if remote load throws AccessDeniedError', () async {
-    mockRemoteError(DomainError.accessDenied);
+    mockRemoteLoadError(DomainError.accessDenied);
 
     final future = sut.load();
 
@@ -80,7 +86,7 @@ void main() {
   });
 
   test('Should call local fetch on remote error', () async {
-    mockRemoteError(DomainError.unexpected);
+    mockRemoteLoadError(DomainError.unexpected);
 
     await sut.load();
 
@@ -89,11 +95,20 @@ void main() {
   });
 
   test('Should return local surveys', () async {
-    mockRemoteError(DomainError.unexpected);
+    mockRemoteLoadError(DomainError.unexpected);
 
     final surveys = await sut.load();
 
     expect(surveys, localSurveys);
+  });
+
+  test('Should throw UnexpectedError if remote and local throws', () async {
+    mockRemoteLoadError(DomainError.unexpected);
+    mockLocalLoadError();
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
 
