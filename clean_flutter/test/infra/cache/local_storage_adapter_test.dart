@@ -77,10 +77,26 @@ void main() {
   });
 
   group('Fetch', () {
+    late String fetchReturn;
+
+    void mockFetch() => when(() => localStorage.getItem(any()))
+        .thenAnswer((_) async => fetchReturn);
+
+    setUp(() {
+      fetchReturn = faker.randomGenerator.string(10);
+      mockFetch();
+    });
+
     test('Should call localStorage with correct values', () async {
       await sut.fetch(key);
 
       verify(() => localStorage.getItem(key)).called(1);
+    });
+
+    test('Should return same value as localStorage', () async {
+      final data = await sut.fetch(key);
+
+      expect(data, fetchReturn);
     });
   });
 }
