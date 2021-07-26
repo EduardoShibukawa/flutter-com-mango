@@ -1,13 +1,10 @@
-import 'dart:math';
-
-import 'package:faker/faker.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
-
 import 'package:clean_flutter/data/cache/cache.dart';
 import 'package:clean_flutter/data/usecase/usecase.dart';
 import 'package:clean_flutter/domain/entities/survey_entity.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
+import 'package:faker/faker.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:test/test.dart';
 
 class CacheStorageSpy extends Mock implements CacheStorage {}
 
@@ -237,8 +234,6 @@ void main() {
 
     When mockSaveCall() => when(
         () => cacheStorage.save(key: 'surveys', value: any(named: 'value')));
-
-    void mockSave() => mockSaveCall().thenAnswer((_) async => {});
 
     void mockSaveError() => mockSaveCall().thenThrow(Exception());
 
