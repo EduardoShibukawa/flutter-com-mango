@@ -15,6 +15,7 @@ void main() {
   late RemoteLoadSurveysSpy remote;
   late RemoteLoadSurveysWithLocalFallback sut;
   late List<SurveyEntity> remoteSurveys;
+  late List<SurveyEntity> localSurveys;
 
   List<SurveyEntity> mockSurveys() => [
         SurveyEntity(
@@ -36,6 +37,11 @@ void main() {
   void mockSaveLocal() =>
       when(() => local.save(any())).thenAnswer((_) async => {});
 
+  void mockLocalLoad() {
+    localSurveys = mockSurveys();
+    when(() => local.load()).thenAnswer((_) async => localSurveys);
+  }
+
   setUp(() {
     remote = RemoteLoadSurveysSpy();
     local = LocalLoadSurveysSpy();
@@ -43,6 +49,8 @@ void main() {
 
     mockRemoteLoad();
     mockSaveLocal();
+    when(() => local.validate()).thenAnswer((_) async => {});
+    mockLocalLoad();
   });
 
   test('Should call remote load', () async {
@@ -57,7 +65,7 @@ void main() {
     verify(() => local.save(remoteSurveys)).called(1);
   });
 
-  test('Should return remote data', () async {
+  test('Should return remote surveys', () async {
     final surveys = await sut.load();
 
     expect(surveys, remoteSurveys);
@@ -72,14 +80,20 @@ void main() {
   });
 
   test('Should call local fetch on remote error', () async {
-    when(() => local.validate()).thenAnswer((_) async => {});
-    when(() => local.load()).thenAnswer((_) async => []);
     mockRemoteError(DomainError.unexpected);
 
     await sut.load();
 
     verify(() => local.validate()).called(1);
     verify(() => local.load()).called(1);
+  });
+
+  test('Should return local surveys', () async {
+    mockRemoteError(DomainError.unexpected);
+
+    final surveys = await sut.load();
+
+    expect(surveys, localSurveys);
   });
 }
 
@@ -103,9 +117,7 @@ class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
       if (error == DomainError.accessDenied) rethrow;
 
       await local.validate();
-      await local.load();
+      return await local.load();
     }
-
-    return [];
   }
 }
