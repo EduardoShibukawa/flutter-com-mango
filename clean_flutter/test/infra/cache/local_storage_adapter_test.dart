@@ -79,8 +79,11 @@ void main() {
   group('Fetch', () {
     late String fetchReturn;
 
-    void mockFetch() => when(() => localStorage.getItem(any()))
-        .thenAnswer((_) async => fetchReturn);
+    When mockFetchCall() => when(() => localStorage.getItem(any()));
+
+    void mockFetch() => mockFetchCall().thenAnswer((_) async => fetchReturn);
+
+    void mockFetchError() => mockFetchCall().thenThrow(Exception());
 
     setUp(() {
       fetchReturn = faker.randomGenerator.string(10);
@@ -97,6 +100,14 @@ void main() {
       final data = await sut.fetch(key);
 
       expect(data, fetchReturn);
+    });
+
+    test('Should throw if getItem throws', () async {
+      mockFetchError();
+
+      final future = sut.fetch(key);
+
+      expect(future, throwsException);
     });
   });
 }
