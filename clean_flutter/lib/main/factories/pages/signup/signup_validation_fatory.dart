@@ -1,7 +1,7 @@
-import 'package:clean_flutter/main/builders/validation_builder.dart';
-
 import '../../../../presentation/presenters/protocols/protocols.dart';
 import '../../../../validation/valdation.dart';
+import '../../../builders/validation_builder.dart';
+import '../../../composites/composites.dart';
 
 Validation makeSignUpValidation() {
   return ValidationComposite(makeSignUpValidations());
