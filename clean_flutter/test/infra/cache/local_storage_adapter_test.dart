@@ -11,14 +11,24 @@ void main() {
   late String key;
   late dynamic value;
 
+  When mockDeleteItemCall() => when(() => localStorage.deleteItem(key));
+
+  void mockDeleteItem() => mockDeleteItemCall().thenAnswer((_) async => {});
+
+  void mockDeleteItemError() => mockDeleteItemCall().thenThrow(Exception());
+
+  When mockSetItemCall() => when(() => localStorage.setItem(key, value));
+
+  void mockSetItem() => mockSetItemCall().thenAnswer((_) async => {});
+
   setUp(() {
     localStorage = LocalStorageSpy();
     sut = LocalStorageAdapter(localStorage: localStorage);
     key = faker.randomGenerator.string(5);
     value = faker.randomGenerator.string(50);
 
-    when(() => localStorage.deleteItem(key)).thenAnswer((_) async => {});
-    when(() => localStorage.setItem(key, value)).thenAnswer((_) async => {});
+    mockDeleteItem();
+    mockSetItem();
   });
 
   test('Should call localStorage with correct values', () async {
@@ -26,6 +36,14 @@ void main() {
 
     verify(() => localStorage.deleteItem(key)).called(1);
     verify(() => localStorage.setItem(key, value)).called(1);
+  });
+
+  test('Should throw if deleteItem throws', () async {
+    mockDeleteItemError();
+
+    final future = sut.save(key: key, value: value);
+
+    expect(future, throwsException);
   });
 }
 
