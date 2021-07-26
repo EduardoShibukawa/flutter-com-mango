@@ -1,5 +1,6 @@
 import 'package:clean_flutter/data/usecase/usecase.dart';
 import 'package:clean_flutter/domain/entities/survey_entity.dart';
+import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -12,7 +13,7 @@ void main() {
   late LocalLoadSurveysSpy local;
   late RemoteLoadSurveysSpy remote;
   late RemoteLoadSurveysWithLocalFallback sut;
-  late List<SurveyEntity> surveys;
+  late List<SurveyEntity> remoteSurveys;
 
   List<SurveyEntity> mockSurveys() => [
         SurveyEntity(
@@ -23,8 +24,8 @@ void main() {
       ];
 
   void mockRemoteLoad() {
-    surveys = mockSurveys();
-    when(() => remote.load()).thenAnswer((_) async => surveys);
+    remoteSurveys = mockSurveys();
+    when(() => remote.load()).thenAnswer((_) async => remoteSurveys);
   }
 
   void mockSaveLocal() =>
@@ -48,11 +49,17 @@ void main() {
   test('Should call local save with remote data', () async {
     await sut.load();
 
-    verify(() => local.save(surveys)).called(1);
+    verify(() => local.save(remoteSurveys)).called(1);
+  });
+
+  test('Should return remote data', () async {
+    final surveys = await sut.load();
+
+    expect(surveys, remoteSurveys);
   });
 }
 
-class RemoteLoadSurveysWithLocalFallback {
+class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
   final RemoteLoadSurveys remote;
   final LocalLoadSurveys local;
 
@@ -61,9 +68,11 @@ class RemoteLoadSurveysWithLocalFallback {
     required this.local,
   });
 
-  Future<void> load() async {
+  Future<List<SurveyEntity>> load() async {
     final surveys = await remote.load();
 
     await local.save(surveys);
+
+    return surveys;
   }
 }
