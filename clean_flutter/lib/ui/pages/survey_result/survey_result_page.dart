@@ -18,7 +18,7 @@ class SurveyResultPage extends StatelessWidget {
         builder: (context) {
           presenter.loadData();
 
-          return StreamBuilder<dynamic>(
+          return StreamBuilder<SurveyResultViewModel>(
               stream: presenter.surveyResultStream,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -27,7 +27,7 @@ class SurveyResultPage extends StatelessWidget {
                     reload: presenter.loadData,
                   );
                 } else if (snapshot.hasData) {
-                  return SurveyResult();
+                  return SurveyResult(snapshot.data!);
                 }
 
                 return Center(child: CircularProgressIndicator());
