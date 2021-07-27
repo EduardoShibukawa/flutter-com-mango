@@ -1,5 +1,7 @@
-import 'package:clean_flutter/ui/pages/survey_result/survey_result.dart';
 import 'package:flutter/material.dart';
+
+import '../survey_result.dart';
+import 'components.dart';
 
 class SurveyResult extends StatelessWidget {
   final SurveyResultViewModel viewModel;
@@ -11,95 +13,12 @@ class SurveyResult extends StatelessWidget {
     return ListView.builder(
       itemBuilder: (context, index) {
         if (index == 0) {
-          return Container(
-            padding: EdgeInsets.only(top: 40, bottom: 20, left: 20, right: 20),
-            decoration: BoxDecoration(
-              color: Theme.of(context).disabledColor.withAlpha(90),
-            ),
-            child: Text(this.viewModel.question),
-          );
+          return SurveyHeader(viewModel.question);
         }
 
-        return Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).backgroundColor,
-              ),
-              padding: EdgeInsets.all(15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  viewModel.answers[index - 1].image?.isNotEmpty ?? false
-                      ? Image.network(
-                          viewModel.answers[index - 1].image!,
-                          width: 40,
-                        )
-                      : SizedBox(
-                          height: 0,
-                        ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        viewModel.answers[index - 1].answer,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    viewModel.answers[index - 1].percent,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                  viewModel.answers[index - 1].isCurrentAnswer
-                      ? ActiveIcon()
-                      : DisableIcon(),
-                ],
-              ),
-            ),
-            Divider(height: 1)
-          ],
-        );
+        return SurveyAnswer(viewModel.answers[index - 1]);
       },
       itemCount: viewModel.answers.length + 1,
-    );
-  }
-}
-
-class ActiveIcon extends StatelessWidget {
-  const ActiveIcon({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 10),
-      child: Icon(
-        Icons.check_circle,
-        color: Theme.of(context).highlightColor,
-      ),
-    );
-  }
-}
-
-class DisableIcon extends StatelessWidget {
-  const DisableIcon({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 10),
-      child: Icon(
-        Icons.check_circle,
-        color: Theme.of(context).disabledColor,
-      ),
     );
   }
 }
