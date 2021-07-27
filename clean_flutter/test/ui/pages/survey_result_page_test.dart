@@ -73,4 +73,16 @@ void main() {
     expect(find.text('Question 1'), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
+
+  testWidgets('Should call LoadSurveys on reload button click',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveyResultController.addError(UIError.unexpected.description);
+    await tester.pump();
+
+    await tester.tap(find.text('Recarregar'));
+
+    verify(() => presenter.loadData()).called(2);
+  });
 }

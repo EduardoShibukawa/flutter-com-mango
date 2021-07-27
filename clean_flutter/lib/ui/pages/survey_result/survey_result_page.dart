@@ -24,7 +24,7 @@ class SurveyResultPage extends StatelessWidget {
                 if (snapshot.hasError) {
                   return ReloadScreen(
                     error: snapshot.error.toString(),
-                    reload: () async {},
+                    reload: presenter.loadData,
                   );
                 } else if (snapshot.hasData) {
                   return SurveyResult();
