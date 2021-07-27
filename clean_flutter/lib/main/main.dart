@@ -32,7 +32,7 @@ class App extends StatelessWidget {
       title: '4Dev',
       debugShowCheckedModeBanner: false,
       theme: makeAppTheme(),
-      initialRoute: '/',
+      initialRoute: '/survey_result/3',
       getPages: [
         GetPage(
           name: '/',
@@ -53,7 +53,8 @@ class App extends StatelessWidget {
           name: '/surveys',
           page: makeSurveyPage,
           transition: Transition.fadeIn,
-        )
+        ),
+        GetPage(name: '/survey_result/:survey_id', page: makeSurveyResultPage)
       ],
     );
   }
