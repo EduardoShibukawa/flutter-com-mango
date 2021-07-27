@@ -24,7 +24,7 @@ void main() {
 
     when(() => presenter.loadData()).thenAnswer((_) async => {});
 
-    mockNetworkImagesFor(() async {
+    await mockNetworkImagesFor(() async {
       await tester.pumpWidget(surveysPage);
     });
   }

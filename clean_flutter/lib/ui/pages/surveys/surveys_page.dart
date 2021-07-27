@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:clean_flutter/ui/components/components.dart';
 import 'package:flutter/material.dart';
 
 import '../../helpers/helpers.dart';
@@ -26,22 +27,9 @@ class SurveysPage extends StatelessWidget {
             stream: presenter.surveysStream,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return Padding(
-                  padding: const EdgeInsets.all(40),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        snapshot.error!.toString(),
-                        style: TextStyle(fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                      ElevatedButton(
-                        onPressed: presenter.loadData,
-                        child: Text(R.strings.reload),
-                      ),
-                    ],
-                  ),
+                return ReloadScreen(
+                  error: snapshot.error!.toString(),
+                  reload: presenter.loadData,
                 );
               } else if (snapshot.hasData) {
                 return Padding(
