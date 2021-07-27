@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
+
 import '../../../../ui/pages/pages.dart';
 
-SurveyResultPage makeSurveyResultPage() {
-  return SurveyResultPage();
+Widget makeSurveyResultPage() {
+  // return SurveyResultPage();
+  return Text('mock');
 }
