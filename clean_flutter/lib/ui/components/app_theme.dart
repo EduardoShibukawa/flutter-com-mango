@@ -8,12 +8,18 @@ ThemeData makeAppTheme() {
   final primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
   final primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
   final secondaryColorDark = Color.fromRGBO(0, 37, 26, 1);
+  final secondaryColor = Color.fromRGBO(0, 77, 64, 1);
+  final disableColor = Colors.grey[400];
+  final dividersColor = Colors.grey;
 
   return ThemeData(
       primaryColor: primaryColor,
       primaryColorDark: primaryColorDark,
       primaryColorLight: primaryColorLight,
+      highlightColor: secondaryColor,
       secondaryHeaderColor: secondaryColorDark,
+      disabledColor: disableColor,
+      dividerColor: dividersColor,
       accentColor: primaryColor,
       backgroundColor: Colors.white,
       textTheme: TextTheme(
