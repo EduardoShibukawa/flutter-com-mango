@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-mixin NavigateManager {
+mixin NavigateManager on GetxController {
   final _navigateTo = Rxn<String>();
 
   Stream<String> get navigateToStream => _navigateTo.stream.map((s) => s!);
