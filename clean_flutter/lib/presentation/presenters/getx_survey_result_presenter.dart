@@ -4,19 +4,18 @@ import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/helpers.dart';
 import '../../ui/pages/pages.dart';
+import '../mixins/mixins.dart';
 
-class GetxSurveyResultPresenter implements SurveyResultPresenter {
+class GetxSurveyResultPresenter
+    with SessionManager
+    implements SurveyResultPresenter {
   final LoadSurveyResult loadSurveyResult;
   final String surveyId;
 
   final _surveyResult = Rxn<SurveyResultViewModel>();
-  final _isSessionExpired = false.obs;
 
   Stream<SurveyResultViewModel> get surveyResultStream =>
       _surveyResult.stream.map((e) => e!);
-
-  Stream<bool> get isSessionExpiredStream =>
-      _isSessionExpired.stream.map((e) => e!);
 
   GetxSurveyResultPresenter({
     required this.loadSurveyResult,
@@ -42,7 +41,7 @@ class GetxSurveyResultPresenter implements SurveyResultPresenter {
       );
     } on DomainError catch (error) {
       if (error == DomainError.accessDenied)
-        _isSessionExpired.value = true;
+        isSessionExpired = true;
       else
         _surveyResult.addError(
             UIError.unexpected.description, StackTrace.current);

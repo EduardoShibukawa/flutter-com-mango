@@ -1,5 +1,3 @@
-import 'package:http/http.dart';
-
 import '../../data/cache/cache.dart';
 import '../../data/http/http.dart';
 
