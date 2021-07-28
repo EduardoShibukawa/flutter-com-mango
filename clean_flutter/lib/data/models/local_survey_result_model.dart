@@ -1,28 +1,28 @@
 import '../../domain/entities/entities.dart';
 import '../http/http.dart';
 
-class RemoteSurveyResultModel {
+class LocalSurveyResultModel {
   final String surveyId;
   final String question;
-  final List<RemoteSurveyAnswerModel> answers;
+  final List<LocalSurveyAnswerModel> answers;
 
-  RemoteSurveyResultModel({
+  LocalSurveyResultModel({
     required this.surveyId,
     required this.question,
     required this.answers,
   });
 
-  factory RemoteSurveyResultModel.fromJson(Map json) {
+  factory LocalSurveyResultModel.fromJson(Map json) {
     if (!json.keys.toSet().containsAll(['surveyId', 'question', 'answers'])) {
       throw HttpError.invalidData;
     }
 
-    return RemoteSurveyResultModel(
+    return LocalSurveyResultModel(
       surveyId: json['surveyId'],
       question: json['question'],
       answers: json['answers']
-          .map<RemoteSurveyAnswerModel>(
-              (a) => RemoteSurveyAnswerModel.fromJson(a))
+          .map<LocalSurveyAnswerModel>(
+              (a) => LocalSurveyAnswerModel.fromJson(a))
           .toList(),
     );
   }
@@ -34,38 +34,38 @@ class RemoteSurveyResultModel {
       );
 }
 
-class RemoteSurveyAnswerModel {
+class LocalSurveyAnswerModel {
   final String? image;
   final String answer;
-  final bool isCurrentAccountAnswer;
+  final bool isCurrentAnswer;
   final int percent;
 
-  RemoteSurveyAnswerModel({
+  LocalSurveyAnswerModel({
     this.image,
     required this.answer,
-    required this.isCurrentAccountAnswer,
+    required this.isCurrentAnswer,
     required this.percent,
   });
 
-  factory RemoteSurveyAnswerModel.fromJson(Map json) {
+  factory LocalSurveyAnswerModel.fromJson(Map json) {
     if (!json.keys
         .toSet()
-        .containsAll(['answer', 'isCurrentAccountAnswer', 'percent'])) {
+        .containsAll(['answer', 'isCurrentAnswer', 'percent'])) {
       throw HttpError.invalidData;
     }
 
-    return RemoteSurveyAnswerModel(
+    return LocalSurveyAnswerModel(
       image: json['image'],
       answer: json['answer'],
-      isCurrentAccountAnswer: json['isCurrentAccountAnswer'],
-      percent: json['percent'],
+      isCurrentAnswer: json['isCurrentAnswer'].toLowerCase() == 'true',
+      percent: int.parse(json['percent']),
     );
   }
 
   SurveyAnswerEntity toEntity() => SurveyAnswerEntity(
         image: image,
         answer: answer,
-        isCurrentAnswer: isCurrentAccountAnswer,
+        isCurrentAnswer: isCurrentAnswer,
         percent: percent,
       );
 }
