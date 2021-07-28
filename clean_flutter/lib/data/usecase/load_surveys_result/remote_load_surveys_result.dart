@@ -4,7 +4,7 @@ import '../../../domain/usecases/usecases.dart';
 import '../../http/http.dart';
 import '../../models/models.dart';
 
-class RemoteLoadSurveysResult implements LoadSurveysResult {
+class RemoteLoadSurveysResult implements LoadSurveyResult {
   late String url;
   late HttpClient httpClient;
 
