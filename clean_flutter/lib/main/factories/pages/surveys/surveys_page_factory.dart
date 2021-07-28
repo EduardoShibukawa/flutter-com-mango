@@ -1,7 +1,6 @@
-import 'package:clean_flutter/main/factories/pages/pages.dart';
-
 import '../../../../ui/pages/pages.dart';
+import '../pages.dart';
 
 SurveysPage makeSurveyPage() {
-  return SurveysPage(makeSGetxSurveysPresenter());
+  return SurveysPage(makeGetxSurveysPresenter());
 }
