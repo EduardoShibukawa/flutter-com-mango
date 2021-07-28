@@ -43,8 +43,8 @@ void main() {
     mockLoadSurveyResultCall().thenAnswer((_) async => data);
   }
 
-  void mockLoadSurveyResultError() =>
-      mockLoadSurveyResultCall().thenThrow(DomainError.unexpected);
+  void mockLoadSurveyResultError(DomainError error) =>
+      mockLoadSurveyResultCall().thenThrow(error);
 
   setUpAll(() {
     initializeDateFormatting('en_US', null);
@@ -90,12 +90,20 @@ void main() {
   });
 
   test('Should emit correct events on failure', () async {
-    mockLoadSurveyResultError();
+    mockLoadSurveyResultError(DomainError.unexpected);
 
     sut.surveyResultStream.listen(null,
         onError: expectAsync1(
           (error) => expect(error, UIError.unexpected.description),
         ));
+
+    await sut.loadData();
+  });
+
+  test('Should emit correct events on access denied', () async {
+    mockLoadSurveyResultError(DomainError.accessDenied);
+
+    expectLater(sut.isSessionExpiredStream, emits(true));
 
     await sut.loadData();
   });

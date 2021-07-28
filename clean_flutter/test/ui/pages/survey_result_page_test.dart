@@ -14,6 +14,7 @@ class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 void main() {
   late SurveyResultPresenterSpy presenter;
   late StreamController<SurveyResultViewModel> surveyResultController;
+  late StreamController<bool> isSessionExpiredController;
 
   SurveyResultViewModel makeSurveyResult() => SurveyResultViewModel(
         surveyId: 'Any id',
@@ -35,15 +36,19 @@ void main() {
 
   void initStreams() {
     surveyResultController = StreamController();
+    isSessionExpiredController = StreamController();
   }
 
   void closeStreams() {
     surveyResultController.close();
+    isSessionExpiredController.close();
   }
 
   void mockStreams() {
     when(() => presenter.surveyResultStream)
         .thenAnswer((_) => surveyResultController.stream);
+    when(() => presenter.isSessionExpiredStream)
+        .thenAnswer((_) => isSessionExpiredController.stream);
   }
 
   Future<void> mockPump(WidgetTester tester) async {
@@ -65,7 +70,8 @@ void main() {
       getPages: [
         GetPage(
             name: '/survey_result/:survey_id',
-            page: () => SurveyResultPage(presenter))
+            page: () => SurveyResultPage(presenter)),
+        GetPage(name: '/login', page: () => Scaffold(body: Text('fake login'))),
       ],
     );
 
@@ -135,5 +141,24 @@ void main() {
     expect((image as NetworkImage).url, "Image 0");
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('Should logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(true);
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/login');
+    expect(find.text('fake login'), findsOneWidget);
+  });
+
+  testWidgets('Should not logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(false);
+    await tester.pump();
+
+    expect(Get.currentRoute, '/survey_result/any_survey_id');
   });
 }
