@@ -69,6 +69,8 @@ void main() {
 
     mockToken();
     mockHttpResponse();
+    when(() => deleteSecureCacheStorage.deleteSecure('token'))
+        .thenAnswer((_) async => {});
   });
 
   test('Should call FetchSecureCacheStorage with correct key', () async {
@@ -120,12 +122,12 @@ void main() {
     expect(future, throwsA(HttpError.forbidden));
   });
 
-  test('Should throw ForbiddenError if FetchSecureCacheStorage throws',
-      () async {
+  test('Should delete token cache if FetchSecureCacheStorage throws', () async {
     mockTokenError();
 
-    await sut.request(url: url, method: method, body: body);
+    final future = sut.request(url: url, method: method, body: body);
 
+    expect(future, throwsA(HttpError.forbidden));
     verify(() => deleteSecureCacheStorage.deleteSecure('token')).called(1);
   });
 
@@ -135,5 +137,16 @@ void main() {
     final future = sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.badRequest));
+  });
+
+  test('Should delete cache if request throws ForbiddenError', () async {
+    mockHttpResponseError(HttpError.forbidden);
+
+    final future = sut.request(url: url, method: method, body: body);
+
+    await untilCalled(() => deleteSecureCacheStorage.deleteSecure('token'));
+
+    expect(future, throwsA(HttpError.forbidden));
+    verify(() => deleteSecureCacheStorage.deleteSecure('token')).called(1);
   });
 }

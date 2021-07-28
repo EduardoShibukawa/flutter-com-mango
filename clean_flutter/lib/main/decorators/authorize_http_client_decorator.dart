@@ -24,21 +24,22 @@ class AuthorizeHttpClientDecorator implements HttpClient {
 
     try {
       token = await fetchSecureCacheStorage.fetchSecure('token');
-    } catch (_) {
+      final authorizedHeaders = headers ?? {}
+        ..addAll({'x-access-token': token});
+
+      return Future.value(
+        await decoratee.request(
+          url: url,
+          method: method,
+          body: body,
+          headers: authorizedHeaders,
+        ),
+      );
+    } catch (error) {
+      if (error is HttpError && error != HttpError.forbidden) rethrow;
+
       await deleteSecureCacheStorage.deleteSecure('token');
       throw HttpError.forbidden;
     }
-
-    final authorizedHeaders = headers ?? {}
-      ..addAll({'x-access-token': token});
-
-    return Future.value(
-      await decoratee.request(
-        url: url,
-        method: method,
-        body: body,
-        headers: authorizedHeaders,
-      ),
-    );
   }
 }
