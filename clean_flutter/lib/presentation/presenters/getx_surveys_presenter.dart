@@ -11,10 +11,13 @@ class GetxSurveysPresenter implements SurveysPresenter {
 
   final _surveys = Rx<List<SurveyViewModel>>([]);
   final _navigateTo = RxnString();
+  final _isSessionExpired = false.obs;
 
   Stream<List<SurveyViewModel>> get surveysStream =>
       _surveys.stream.map((e) => e!);
   Stream<String> get navigateToStream => _navigateTo.map((s) => s!);
+  Stream<bool> get isSessionExpiredStream =>
+      _isSessionExpired.stream.map((e) => e!);
 
   GetxSurveysPresenter({required this.loadSurveys});
 

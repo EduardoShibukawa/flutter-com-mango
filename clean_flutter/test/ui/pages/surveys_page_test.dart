@@ -13,15 +13,18 @@ void main() {
   late SurveysPresenterSpy presenter;
   late StreamController<List<SurveyViewModel>> loadSurveysController;
   late StreamController<String> navigateToController;
+  late StreamController<bool> isSessionExpiredController;
 
   void initStreams() {
     loadSurveysController = StreamController();
     navigateToController = StreamController();
+    isSessionExpiredController = StreamController();
   }
 
   void closeStreams() {
     loadSurveysController.close();
     navigateToController.close();
+    isSessionExpiredController.close();
   }
 
   void mockStreams() {
@@ -30,6 +33,10 @@ void main() {
 
     when(() => presenter.navigateToStream)
         .thenAnswer((_) => navigateToController.stream);
+
+    when(
+      () => presenter.isSessionExpiredStream,
+    ).thenAnswer((_) => isSessionExpiredController.stream);
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -42,6 +49,7 @@ void main() {
         GetPage(name: '/surveys', page: () => SurveysPage(presenter)),
         GetPage(
             name: '/any_route', page: () => Scaffold(body: Text('fake page'))),
+        GetPage(name: '/login', page: () => Scaffold(body: Text('fake login'))),
       ],
     );
 
@@ -141,5 +149,33 @@ void main() {
 
     expect(Get.currentRoute, '/any_route');
     expect(find.text('fake page'), findsOneWidget);
+  });
+
+  testWidgets('Should not change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('');
+    await tester.pump();
+
+    expect(Get.currentRoute, '/surveys');
+  });
+
+  testWidgets('Should logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(true);
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/login');
+    expect(find.text('fake login'), findsOneWidget);
+  });
+
+  testWidgets('Should not logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(false);
+    await tester.pump();
+
+    expect(Get.currentRoute, '/surveys');
   });
 }
