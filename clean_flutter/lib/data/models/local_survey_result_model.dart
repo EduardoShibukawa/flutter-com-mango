@@ -27,11 +27,28 @@ class LocalSurveyResultModel {
     );
   }
 
+  factory LocalSurveyResultModel.fromEntity(SurveyResultEntity survey) {
+    return LocalSurveyResultModel(
+      surveyId: survey.surveyId,
+      question: survey.question,
+      answers: survey.answers
+          .map<LocalSurveyAnswerModel>(
+              (a) => LocalSurveyAnswerModel.fromEntity(a))
+          .toList(),
+    );
+  }
+
   SurveyResultEntity toEntity() => SurveyResultEntity(
         surveyId: surveyId,
         question: question,
         answers: answers.map<SurveyAnswerEntity>((a) => a.toEntity()).toList(),
       );
+
+  Map toJson() => {
+        'surveyId': surveyId,
+        'question': question,
+        'answers': answers.map((a) => a.toJson()).toList(),
+      };
 }
 
 class LocalSurveyAnswerModel {
@@ -62,10 +79,26 @@ class LocalSurveyAnswerModel {
     );
   }
 
+  factory LocalSurveyAnswerModel.fromEntity(SurveyAnswerEntity answer) {
+    return LocalSurveyAnswerModel(
+      image: answer.image,
+      answer: answer.answer,
+      isCurrentAnswer: answer.isCurrentAnswer,
+      percent: answer.percent,
+    );
+  }
+
   SurveyAnswerEntity toEntity() => SurveyAnswerEntity(
         image: image,
         answer: answer,
         isCurrentAnswer: isCurrentAnswer,
         percent: percent,
       );
+
+  Map toJson() => {
+        'image': image,
+        'answer': answer,
+        'isCurrentAnswer': isCurrentAnswer.toString(),
+        'percent': percent.toString(),
+      };
 }
