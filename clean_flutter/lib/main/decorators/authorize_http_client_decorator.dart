@@ -23,7 +23,7 @@ class AuthorizeHttpClientDecorator implements HttpClient {
     late String token;
 
     try {
-      token = await fetchSecureCacheStorage.fetchSecure('token');
+      token = await fetchSecureCacheStorage.fetch('token');
       final authorizedHeaders = headers ?? {}
         ..addAll({'x-access-token': token});
 
@@ -38,7 +38,7 @@ class AuthorizeHttpClientDecorator implements HttpClient {
     } catch (error) {
       if (error is HttpError && error != HttpError.forbidden) rethrow;
 
-      await deleteSecureCacheStorage.deleteSecure('token');
+      await deleteSecureCacheStorage.delete('token');
       throw HttpError.forbidden;
     }
   }

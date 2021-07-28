@@ -16,7 +16,7 @@ void main() {
   late AccountEntity account;
 
   When mockSaveSecureCacheStorageCall() =>
-      when(() => saveSecureCacheStorage.saveSecure(
+      when(() => saveSecureCacheStorage.save(
             key: any(named: 'key'),
             value: any(named: 'value'),
           ));
@@ -39,8 +39,8 @@ void main() {
   test('Should call SaveSecureCacheStorage with correct values', () async {
     await sut.save(account);
 
-    verify(() =>
-        saveSecureCacheStorage.saveSecure(key: 'token', value: account.token));
+    verify(
+        () => saveSecureCacheStorage.save(key: 'token', value: account.token));
   });
 
   test('Should throw UnexpectedError if SaveSecureCacheStorage throws',

@@ -37,7 +37,7 @@ void main() {
     });
 
     test('Should call save secure with correct values', () async {
-      await sut.saveSecure(key: key, value: value);
+      await sut.save(key: key, value: value);
 
       verify(() => secureStorage.write(key: key, value: value));
     });
@@ -45,7 +45,7 @@ void main() {
     test('Should throw if save secure throws', () async {
       mockFlutterSecureStorageError();
 
-      final future = sut.saveSecure(key: key, value: value);
+      final future = sut.save(key: key, value: value);
 
       expect(future, throwsException);
     });
@@ -64,13 +64,13 @@ void main() {
       mockFlutterSecureStorage();
     });
     test('Should call fetch secure with correct values', () async {
-      await sut.fetchSecure(key);
+      await sut.fetch(key);
 
       verify(() => secureStorage.read(key: key));
     });
 
     test('Should return correct value on success', () async {
-      final fetchedValue = await sut.fetchSecure(key);
+      final fetchedValue = await sut.fetch(key);
 
       expect(fetchedValue, value);
     });
@@ -78,7 +78,37 @@ void main() {
     test('Should throw if FetchSecure throws', () async {
       mockFlutterSecureStorageError();
 
-      final future = sut.fetchSecure(key);
+      final future = sut.fetch(key);
+
+      expect(future, throwsException);
+    });
+  });
+
+  group('Delete', () {
+    When mockFlutterSecureStorageCall() => when(() => secureStorage.delete(
+          key: any(named: 'key'),
+        ));
+
+    void mockFlutterSecureStorage() =>
+        mockFlutterSecureStorageCall().thenAnswer((_) => Future.value());
+
+    void mockFlutterSecureStorageError() =>
+        mockFlutterSecureStorageCall().thenThrow(Exception());
+
+    setUp(() {
+      mockFlutterSecureStorage();
+    });
+
+    test('Should be called with correct key', () async {
+      await sut.delete(key);
+
+      verify(() => secureStorage.delete(key: key)).called(1);
+    });
+
+    test('Should throw if delete throws', () async {
+      mockFlutterSecureStorageError();
+
+      final future = sut.delete(key);
 
       expect(future, throwsException);
     });
