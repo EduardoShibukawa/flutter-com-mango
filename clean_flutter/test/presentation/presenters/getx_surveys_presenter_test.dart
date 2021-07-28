@@ -86,4 +86,9 @@ void main() {
 
     await sut.loadData();
   });
+
+  test('Should go to SurveyPage on survey click', () async {
+    sut.navigateToStream.listen((page) => expect(page, '/survey_result/1'));
+    sut.goToSurveyResult('1');
+  });
 }

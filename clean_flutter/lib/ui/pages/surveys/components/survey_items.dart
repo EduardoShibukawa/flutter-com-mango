@@ -8,6 +8,7 @@ class SurveyItems extends StatelessWidget {
   final List<SurveyViewModel> viewModels;
 
   const SurveyItems(this.viewModels);
+
   @override
   Widget build(BuildContext context) {
     return Padding(

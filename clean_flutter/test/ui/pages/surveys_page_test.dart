@@ -12,18 +12,24 @@ class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
 void main() {
   late SurveysPresenterSpy presenter;
   late StreamController<List<SurveyViewModel>> loadSurveysController;
+  late StreamController<String> navigateToController;
 
   void initStreams() {
     loadSurveysController = StreamController();
+    navigateToController = StreamController();
   }
 
   void closeStreams() {
     loadSurveysController.close();
+    navigateToController.close();
   }
 
   void mockStreams() {
     when(() => presenter.surveysStream)
         .thenAnswer((_) => loadSurveysController.stream);
+
+    when(() => presenter.navigateToStream)
+        .thenAnswer((_) => navigateToController.stream);
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -32,7 +38,11 @@ void main() {
     mockStreams();
     final surveysPage = GetMaterialApp(
       initialRoute: '/surveys',
-      getPages: [GetPage(name: '/surveys', page: () => SurveysPage(presenter))],
+      getPages: [
+        GetPage(name: '/surveys', page: () => SurveysPage(presenter)),
+        GetPage(
+            name: '/any_route', page: () => Scaffold(body: Text('fake page'))),
+      ],
     );
 
     when(() => presenter.loadData()).thenAnswer((_) async => {});
@@ -108,5 +118,28 @@ void main() {
     await tester.tap(find.text('Recarregar'));
 
     verify(() => presenter.loadData()).called(2);
+  });
+
+  testWidgets('Should call goToSurveyResult on survey click',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    loadSurveysController.add(makeSurveys());
+    await tester.pump();
+
+    await tester.tap(find.text('Question 1'));
+    await tester.pump();
+
+    verify(() => presenter.goToSurveyResult('1')).called(1);
+  });
+
+  testWidgets('Should change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('/any_route');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/any_route');
+    expect(find.text('fake page'), findsOneWidget);
   });
 }
