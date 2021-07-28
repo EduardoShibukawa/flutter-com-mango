@@ -284,8 +284,6 @@ void main() {
 
       await sut.save(surveyResult);
 
-      print(result);
-
       verify(() => cacheStorage.save(
           key: 'survey_result/${surveyResult.surveyId}',
           value: result)).called(1);
