@@ -7,37 +7,68 @@ import 'package:test/test.dart';
 class RemoteLoadSurveyResultSpy extends Mock implements RemoteLoadSurveyResult {
 }
 
+class LocalLoadSurveyResultSpy extends Mock implements LocalLoadSurveyResult {}
+
 void main() {
   late RemoteLoadSurveyResultSpy remote;
+  late LocalLoadSurveyResult local;
   late RemoteLoadSurveyResultWithLocalFallback sut;
   late String surveyId;
+  late SurveyResultEntity surveyResult;
+
+  void mockSurveyResult() {
+    surveyId = faker.guid.guid();
+
+    surveyResult = SurveyResultEntity(
+      surveyId: surveyId,
+      question: faker.lorem.sentence(),
+      answers: [
+        SurveyAnswerEntity(
+          answer: faker.lorem.sentence(),
+          isCurrentAnswer: faker.randomGenerator.boolean(),
+          percent: faker.randomGenerator.integer(100),
+        )
+      ],
+    );
+
+    when(() => remote.loadBySurvey(surveyId: any(named: "surveyId")))
+        .thenAnswer((_) async => surveyResult);
+  }
 
   setUp(() {
     remote = RemoteLoadSurveyResultSpy();
-    sut = RemoteLoadSurveyResultWithLocalFallback(remote: remote);
-    surveyId = faker.guid.guid();
+    local = LocalLoadSurveyResultSpy();
+    sut = RemoteLoadSurveyResultWithLocalFallback(remote: remote, local: local);
 
-    when(() => remote.loadBySurvey(surveyId: any(named: "surveyId")))
-        .thenAnswer((_) async => SurveyResultEntity(
-              surveyId: faker.guid.guid(),
-              question: faker.lorem.sentence(),
-              answers: [],
-            ));
+    mockSurveyResult();
+    when(() => local.save(surveyResult)).thenAnswer((_) async => {});
   });
 
-  test('Should call remote LoadBySurvey', () {
-    sut.loadBySurvey(surveyId: surveyId);
+  test('Should call remote LoadBySurvey', () async {
+    await sut.loadBySurvey(surveyId: surveyId);
 
     verify(() => remote.loadBySurvey(surveyId: surveyId)).called(1);
+  });
+
+  test('Should call local save with remote data', () async {
+    await sut.loadBySurvey(surveyId: surveyId);
+
+    verify(() => local.save(surveyResult)).called(1);
   });
 }
 
 class RemoteLoadSurveyResultWithLocalFallback {
   final RemoteLoadSurveyResult remote;
+  final LocalLoadSurveyResult local;
 
-  RemoteLoadSurveyResultWithLocalFallback({required this.remote});
+  RemoteLoadSurveyResultWithLocalFallback({
+    required this.remote,
+    required this.local,
+  });
 
   Future<void> loadBySurvey({required String surveyId}) async {
-    await remote.loadBySurvey(surveyId: surveyId);
+    final surveyResult = await remote.loadBySurvey(surveyId: surveyId);
+
+    await local.save(surveyResult);
   }
 }
