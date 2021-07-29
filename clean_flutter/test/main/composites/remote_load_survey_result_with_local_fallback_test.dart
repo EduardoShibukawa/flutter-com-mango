@@ -1,10 +1,11 @@
-import 'package:clean_flutter/data/usecase/load_surveys_result/load_surveys_result.dart';
-import 'package:clean_flutter/domain/entities/entities.dart';
-import 'package:clean_flutter/domain/helpers/helpers.dart';
-import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
+
+import 'package:clean_flutter/data/usecase/load_surveys_result/load_surveys_result.dart';
+import 'package:clean_flutter/domain/entities/entities.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
+import 'package:clean_flutter/main/composites/composites.dart';
 
 class RemoteLoadSurveyResultSpy extends Mock implements RemoteLoadSurveyResult {
 }
@@ -125,29 +126,4 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
-}
-
-class RemoteLoadSurveyResultWithLocalFallback implements LoadSurveyResult {
-  final RemoteLoadSurveyResult remote;
-  final LocalLoadSurveyResult local;
-
-  RemoteLoadSurveyResultWithLocalFallback({
-    required this.remote,
-    required this.local,
-  });
-
-  Future<SurveyResultEntity> loadBySurvey({required String surveyId}) async {
-    try {
-      final surveyResult = await remote.loadBySurvey(surveyId: surveyId);
-
-      await local.save(surveyResult);
-
-      return surveyResult;
-    } catch (error) {
-      if (error == DomainError.accessDenied) rethrow;
-
-      local.validate(surveyId);
-      return local.loadBySurvey(surveyId: surveyId);
-    }
-  }
 }
