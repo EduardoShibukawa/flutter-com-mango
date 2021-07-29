@@ -11,6 +11,8 @@ class RemoteLoadSurveyResultSpy extends Mock implements RemoteLoadSurveyResult {
 
 class LocalLoadSurveyResultSpy extends Mock implements LocalLoadSurveyResult {}
 
+class FakeSurveyResultEntity extends Fake implements SurveyResultEntity {}
+
 void main() {
   late RemoteLoadSurveyResultSpy remote;
   late LocalLoadSurveyResult local;
@@ -18,6 +20,10 @@ void main() {
   late String surveyId;
   late SurveyResultEntity remoteResult;
   late SurveyResultEntity localResult;
+
+  setUpAll(() {
+    registerFallbackValue(FakeSurveyResultEntity());
+  });
 
   SurveyResultEntity mockSurveyResult() {
     return SurveyResultEntity(
