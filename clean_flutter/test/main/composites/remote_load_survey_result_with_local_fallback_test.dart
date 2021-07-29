@@ -1,5 +1,6 @@
 import 'package:clean_flutter/data/usecase/load_surveys_result/load_surveys_result.dart';
 import 'package:clean_flutter/domain/entities/entities.dart';
+import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -55,9 +56,15 @@ void main() {
 
     verify(() => local.save(surveyResult)).called(1);
   });
+
+  test('Should returns remote data', () async {
+    final result = await sut.loadBySurvey(surveyId: surveyId);
+
+    expect(result, surveyResult);
+  });
 }
 
-class RemoteLoadSurveyResultWithLocalFallback {
+class RemoteLoadSurveyResultWithLocalFallback implements LoadSurveyResult {
   final RemoteLoadSurveyResult remote;
   final LocalLoadSurveyResult local;
 
@@ -66,9 +73,11 @@ class RemoteLoadSurveyResultWithLocalFallback {
     required this.local,
   });
 
-  Future<void> loadBySurvey({required String surveyId}) async {
+  Future<SurveyResultEntity> loadBySurvey({required String surveyId}) async {
     final surveyResult = await remote.loadBySurvey(surveyId: surveyId);
 
     await local.save(surveyResult);
+
+    return surveyResult;
   }
 }
