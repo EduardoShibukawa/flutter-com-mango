@@ -8,10 +8,14 @@ class RemoteLoadSurveyResultSpy extends Mock implements RemoteLoadSurveyResult {
 }
 
 void main() {
-  test('Should call remote LoadBySurvey', () {
-    final remote = RemoteLoadSurveyResultSpy();
-    final sut = RemoteLoadSurveyResultWithLocalFallback(remote: remote);
-    final surveyId = faker.guid.guid();
+  late RemoteLoadSurveyResultSpy remote;
+  late RemoteLoadSurveyResultWithLocalFallback sut;
+  late String surveyId;
+
+  setUp(() {
+    remote = RemoteLoadSurveyResultSpy();
+    sut = RemoteLoadSurveyResultWithLocalFallback(remote: remote);
+    surveyId = faker.guid.guid();
 
     when(() => remote.loadBySurvey(surveyId: any(named: "surveyId")))
         .thenAnswer((_) async => SurveyResultEntity(
@@ -19,7 +23,9 @@ void main() {
               question: faker.lorem.sentence(),
               answers: [],
             ));
+  });
 
+  test('Should call remote LoadBySurvey', () {
     sut.loadBySurvey(surveyId: surveyId);
 
     verify(() => remote.loadBySurvey(surveyId: surveyId)).called(1);
