@@ -105,6 +105,14 @@ void main() {
     verify(() => local.validate(surveyId)).called(1);
     verify(() => local.loadBySurvey(surveyId: surveyId)).called(1);
   });
+
+  test('Should returns local data', () async {
+    mockRemoteLoadError(DomainError.unexpected);
+
+    final result = await sut.loadBySurvey(surveyId: surveyId);
+
+    expect(result, localResult);
+  });
 }
 
 class RemoteLoadSurveyResultWithLocalFallback implements LoadSurveyResult {
