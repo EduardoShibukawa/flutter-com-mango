@@ -4,18 +4,18 @@ import '../../../domain/usecases/usecases.dart';
 import '../../http/http.dart';
 import '../../models/models.dart';
 
-class RemoteLoadSurveysResult implements LoadSurveyResult {
+class RemoteLoadSurveyResult implements LoadSurveyResult {
   late String url;
   late HttpClient httpClient;
 
-  RemoteLoadSurveysResult({
+  RemoteLoadSurveyResult({
     required this.url,
     required this.httpClient,
   });
 
   Future<SurveyResultEntity> loadBySurvey({String? surveyId}) async {
     try {
-      final json = await httpClient.request(url: url, method: 'get') ?? [];
+      final json = await httpClient.request(url: url, method: 'get') ?? {};
 
       return RemoteSurveyResultModel.fromJson(json).toEntity();
     } on HttpError catch (error) {

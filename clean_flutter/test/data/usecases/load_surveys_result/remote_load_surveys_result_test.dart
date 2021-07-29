@@ -14,7 +14,7 @@ class HttpClientSpy extends Mock implements HttpClient {}
 void main() {
   late String url;
   late HttpClientSpy httpClient;
-  late RemoteLoadSurveysResult sut;
+  late RemoteLoadSurveyResult sut;
   late Map surveyResult;
 
   Map mockValidData() => {
@@ -44,7 +44,7 @@ void main() {
   setUp(() {
     url = faker.internet.httpUrl();
     httpClient = HttpClientSpy();
-    sut = RemoteLoadSurveysResult(url: url, httpClient: httpClient);
+    sut = RemoteLoadSurveyResult(url: url, httpClient: httpClient);
     surveyResult = mockValidData();
 
     mockHttpData(surveyResult);
