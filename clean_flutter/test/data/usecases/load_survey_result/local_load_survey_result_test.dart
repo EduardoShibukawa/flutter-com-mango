@@ -3,7 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter/data/cache/cache.dart';
-import 'package:clean_flutter/data/usecase/load_surveys_result/local_load_survey_result.dart';
+import 'package:clean_flutter/data/usecase/load_survey_result/local_load_survey_result.dart';
 import 'package:clean_flutter/data/usecase/usecase.dart';
 import 'package:clean_flutter/domain/entities/entities.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';

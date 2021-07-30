@@ -2,7 +2,7 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'package:clean_flutter/data/usecase/load_surveys_result/load_surveys_result.dart';
+import 'package:clean_flutter/data/usecase/load_survey_result/load_survey_result.dart';
 import 'package:clean_flutter/domain/entities/entities.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/main/composites/composites.dart';
