@@ -40,6 +40,14 @@ class HttpAdapter implements HttpClient {
               headers: defaulHeader,
             )
             .timeout(Duration(seconds: 5));
+      } else if (method == 'put') {
+        response = await client
+            .put(
+              Uri.parse(url),
+              headers: defaulHeader,
+              body: jsonBody,
+            )
+            .timeout(Duration(seconds: 5));
       }
     } catch (error) {
       throw HttpError.serverError;
