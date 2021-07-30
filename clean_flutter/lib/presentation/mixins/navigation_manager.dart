@@ -5,5 +5,5 @@ mixin NavigatorManager on GetxController {
 
   Stream<String> get navigateToStream => _navigateTo.stream.map((s) => s!);
 
-  set navigateTo(String value) => _navigateTo.value = value;
+  set navigateTo(String value) => _navigateTo.subject.add(value);
 }
