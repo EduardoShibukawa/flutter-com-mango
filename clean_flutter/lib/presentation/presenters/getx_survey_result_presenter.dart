@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../domain/entities/entities.dart';
 import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/helpers.dart';
@@ -25,34 +26,17 @@ class GetxSurveyResultPresenter extends GetxController
   });
 
   Future<void> loadData() async {
-    try {
-      final surveyResult =
-          await loadSurveyResult.loadBySurvey(surveyId: surveyId);
-
-      _surveyResult.value = SurveyResultViewModel(
-        surveyId: surveyResult.surveyId,
-        question: surveyResult.question,
-        answers: surveyResult.answers
-            .map((a) => SurveyAnswerViewModel(
-                  image: a.image,
-                  answer: a.answer,
-                  isCurrentAnswer: a.isCurrentAnswer,
-                  percent: '${a.percent}%',
-                ))
-            .toList(),
-      );
-    } on DomainError catch (error) {
-      if (error == DomainError.accessDenied)
-        isSessionExpired = true;
-      else
-        _surveyResult.addError(
-            UIError.unexpected.description, StackTrace.current);
-    }
+    _showResultOnAction(
+        () => loadSurveyResult.loadBySurvey(surveyId: surveyId));
   }
 
   Future<void> save({required String answer}) async {
+    _showResultOnAction(() => saveSurveyResult.save(answer: answer));
+  }
+
+  Future<void> _showResultOnAction(Future<SurveyResultEntity> action()) async {
     try {
-      final surveyResult = await saveSurveyResult.save(answer: answer);
+      final surveyResult = await action();
 
       _surveyResult.value = SurveyResultViewModel(
         surveyId: surveyResult.surveyId,
