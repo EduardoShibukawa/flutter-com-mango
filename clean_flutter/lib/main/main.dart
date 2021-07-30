@@ -1,6 +1,6 @@
 import 'package:clean_flutter/ui/helpers/helpers.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
@@ -28,10 +28,13 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     initializeDateFormatting(R.locale.toString(), null);
 
+    final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
+
     return GetMaterialApp(
       title: '4Dev',
       debugShowCheckedModeBanner: false,
       theme: makeAppTheme(),
+      navigatorObservers: [routeObserver],
       initialRoute: '/',
       getPages: [
         GetPage(

@@ -4,7 +4,7 @@ import 'package:clean_flutter/ui/helpers/helpers.dart';
 import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
@@ -40,15 +40,23 @@ void main() {
   }
 
   Future<void> loadPage(WidgetTester tester) async {
+    final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
+
     presenter = SurveysPresenterSpy();
     initStreams();
     mockStreams();
     final surveysPage = GetMaterialApp(
       initialRoute: '/surveys',
+      navigatorObservers: [routeObserver],
       getPages: [
         GetPage(name: '/surveys', page: () => SurveysPage(presenter)),
         GetPage(
-            name: '/any_route', page: () => Scaffold(body: Text('fake page'))),
+          name: '/any_route',
+          page: () => Scaffold(
+            appBar: AppBar(title: Text('any_title')),
+            body: Text('fake page'),
+          ),
+        ),
         GetPage(name: '/login', page: () => Scaffold(body: Text('fake login'))),
       ],
     );
@@ -81,6 +89,17 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
     verify(() => presenter.loadData()).called(1);
+  });
+
+  testWidgets('Should call LoadSurveys on page reload ',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add("/any_route");
+    await tester.pumpAndSettle();
+    await tester.pageBack();
+
+    verify(() => presenter.loadData()).called(2);
   });
 
   testWidgets('Should present error if loadSurveysStream fails',
