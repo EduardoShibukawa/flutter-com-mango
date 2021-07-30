@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../mocks/mocks.dart';
 import '../helpers/helpers.dart';
 
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
@@ -55,21 +56,6 @@ void main() {
     closeStreams();
   });
 
-  List<SurveyViewModel> makeSurveys() => [
-        SurveyViewModel(
-          id: '1',
-          question: 'Question 1',
-          date: 'Date 1',
-          didAnswer: true,
-        ),
-        SurveyViewModel(
-          id: '2',
-          question: 'Question 2',
-          date: 'Date 2',
-          didAnswer: false,
-        ),
-      ];
-
   testWidgets('Should call LoadSurveys on page load ',
       (WidgetTester tester) async {
     await loadPage(tester);
@@ -107,7 +93,7 @@ void main() {
     await loadPage(tester);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-    loadSurveysController.add(makeSurveys());
+    loadSurveysController.add(FakeSurveysFactory.makeViewModels());
     await tester.pump();
 
     expect(find.text('Algo errado aconteceu. Tente novamente em breve.'),
@@ -136,7 +122,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    loadSurveysController.add(makeSurveys());
+    loadSurveysController.add(FakeSurveysFactory.makeViewModels());
     await tester.pump();
 
     await tester.tap(find.text('Question 1'));

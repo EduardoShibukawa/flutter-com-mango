@@ -2,7 +2,6 @@ import 'package:clean_flutter/data/cache/cache.dart';
 import 'package:clean_flutter/data/usecase/usecase.dart';
 import 'package:clean_flutter/domain/entities/survey_entity.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
-import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -102,12 +101,10 @@ void main() {
   group('Validate', () {
     late CacheStorage cacheStorage;
     late LocalLoadSurveys sut;
-    late List<Map<String, String>>? cacheData;
 
     When mockFetchCall() => when(() => cacheStorage.fetch('surveys'));
 
     void mockFetch(List<Map<String, String>>? data) {
-      cacheData = data;
       mockFetchCall().thenAnswer((_) async => data);
     }
 

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:clean_flutter/domain/entities/entities.dart';
+import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:faker/faker.dart';
 
 class FakeSurveysFactory {
@@ -56,6 +57,21 @@ class FakeSurveysFactory {
           id: faker.guid.guid(),
           question: faker.randomGenerator.string(10),
           dateTime: DateTime.utc(2018, 12, 20),
+          didAnswer: false,
+        ),
+      ];
+
+  static List<SurveyViewModel> makeViewModels() => [
+        SurveyViewModel(
+          id: '1',
+          question: 'Question 1',
+          date: 'Date 1',
+          didAnswer: true,
+        ),
+        SurveyViewModel(
+          id: '2',
+          question: 'Question 2',
+          date: 'Date 2',
           didAnswer: false,
         ),
       ];

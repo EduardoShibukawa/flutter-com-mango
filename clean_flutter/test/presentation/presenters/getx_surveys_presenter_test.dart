@@ -1,14 +1,12 @@
-import 'package:faker/faker.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
-
-import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:clean_flutter/domain/entities/survey_entity.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:clean_flutter/presentation/presenters/presenters.dart';
 import 'package:clean_flutter/ui/helpers/helpers.dart';
+import 'package:clean_flutter/ui/pages/pages.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:test/test.dart';
 
 import '../../mocks/mocks.dart';
 

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:clean_flutter/ui/pages/survey_result/survey_result.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -78,6 +79,24 @@ class FakeSurveyResultFactory {
             answer: faker.lorem.sentence(),
             isCurrentAnswer: false,
             percent: 60,
+          ),
+        ],
+      );
+
+  static SurveyResultViewModel makeViewModel() => SurveyResultViewModel(
+        surveyId: 'Any id',
+        question: 'Question',
+        answers: [
+          SurveyAnswerViewModel(
+            image: 'Image 0',
+            answer: 'Answer 0',
+            isCurrentAnswer: true,
+            percent: '60%',
+          ),
+          SurveyAnswerViewModel(
+            answer: 'Answer 1',
+            isCurrentAnswer: false,
+            percent: '40%',
           ),
         ],
       );
