@@ -9,6 +9,7 @@ import '../mixins/mixins.dart';
 class GetxSurveyResultPresenter extends GetxController
     with SessionManager
     implements SurveyResultPresenter {
+  final SaveSurveyResult saveSurveyResult;
   final LoadSurveyResult loadSurveyResult;
   final String surveyId;
 
@@ -18,6 +19,7 @@ class GetxSurveyResultPresenter extends GetxController
       _surveyResult.stream.map((e) => e!);
 
   GetxSurveyResultPresenter({
+    required this.saveSurveyResult,
     required this.loadSurveyResult,
     required this.surveyId,
   });
@@ -49,7 +51,6 @@ class GetxSurveyResultPresenter extends GetxController
   }
 
   Future<void> save({required String answer}) async {
-    // TODO: implement save
-    throw UnimplementedError();
+    await saveSurveyResult.save(answer: answer);
   }
 }
