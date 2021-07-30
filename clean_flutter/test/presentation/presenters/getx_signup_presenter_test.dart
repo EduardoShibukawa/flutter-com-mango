@@ -1,22 +1,20 @@
-import 'package:clean_flutter/domain/entities/account_entity.dart';
-import 'package:clean_flutter/domain/helpers/helpers.dart';
-import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_flutter/domain/entities/account_entity.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
+import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:clean_flutter/presentation/presenters/presenters.dart';
 import 'package:clean_flutter/ui/helpers/errors/ui_error.dart';
+
+import '../../mocks/mocks.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
 class AddAccountSpy extends Mock implements AddAccount {}
 
-class FakeAddAccountParams extends Fake implements AddAccountParams {}
-
 class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
-
-class FakeAccountEntity extends Fake implements AccountEntity {}
 
 void main() {
   late GetxSignUpPresenter sut;
@@ -29,7 +27,7 @@ void main() {
   late String password;
   late String passwordConfirmation;
 
-  late String token;
+  late AccountEntity account;
 
   setUpAll(() {
     registerFallbackValue(FakeAddAccountParams());
@@ -47,8 +45,10 @@ void main() {
 
   When mockAddAccountCall() => when(() => addAccount.add(any()));
 
-  void mockAddAccount() =>
-      mockAddAccountCall().thenAnswer((_) async => AccountEntity(token));
+  void mockAddAccount(AccountEntity data) {
+    account = data;
+    mockAddAccountCall().thenAnswer((_) async => data);
+  }
 
   void mockAddAccountError(DomainError error) =>
       mockAddAccountCall().thenThrow(error);
@@ -75,9 +75,9 @@ void main() {
     name = faker.person.name();
     password = faker.internet.password();
     passwordConfirmation = password;
-    token = faker.guid.guid();
+
     mockValidation();
-    mockAddAccount();
+    mockAddAccount(FakeAccountFactory.makeEntity());
     mockSaveCurrentAccount();
   });
 
@@ -353,7 +353,7 @@ void main() {
     await sut.signUp();
 
     verify(
-      () => saveCurrentAccount.save(AccountEntity(token)),
+      () => saveCurrentAccount.save(account),
     ).called(1);
   });
 

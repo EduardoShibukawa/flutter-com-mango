@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -9,6 +7,8 @@ import 'package:clean_flutter/data/usecase/usecase.dart';
 import 'package:clean_flutter/domain/entities/entities.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 
+import '../../../mocks/mocks.dart';
+
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
@@ -17,27 +17,16 @@ void main() {
   late RemoteLoadSurveyResult sut;
   late Map surveyResult;
 
-  Map mockValidData() => {
-        'surveyId': faker.guid.guid(),
-        'question': faker.randomGenerator.string(50),
-        'answers': List.filled(new Random().nextInt(10), {
-          'image': faker.internet.httpUrl(),
-          'answer': faker.randomGenerator.string(20),
-          'percent': faker.randomGenerator.integer(100),
-          'count': faker.randomGenerator.integer(1000),
-          'isCurrentAccountAnswer': faker.randomGenerator.boolean(),
-        }),
-        'date': faker.date.dateTime().toIso8601String()
-      };
-
   When mockRequestCall() => when(() => httpClient.request(
         url: any(named: 'url'),
         method: any(named: 'method'),
         body: any(named: 'body'),
       ));
 
-  void mockHttpData(Map data) =>
-      mockRequestCall().thenAnswer((_) async => data);
+  void mockHttpData(Map data) {
+    surveyResult = data;
+    mockRequestCall().thenAnswer((_) async => data);
+  }
 
   void mockHttpError(HttpError error) => mockRequestCall().thenThrow(error);
 
@@ -45,9 +34,8 @@ void main() {
     url = faker.internet.httpUrl();
     httpClient = HttpClientSpy();
     sut = RemoteLoadSurveyResult(url: url, httpClient: httpClient);
-    surveyResult = mockValidData();
 
-    mockHttpData(surveyResult);
+    mockHttpData(FakeSurveyResultFactory.makeApiJson());
   });
 
   test('Should call HttpClient with correct values', () async {
@@ -80,7 +68,7 @@ void main() {
   test(
       'Should throw UnexpectedError if HttpClient returns 200 with invalid data',
       () async {
-    mockHttpData({'invalid_data': 'invalid_key'});
+    mockHttpData(FakeSurveyResultFactory.makeInvalidApiJson());
     final future = sut.loadBySurvey();
 
     expect(future, throwsA(DomainError.unexpected));

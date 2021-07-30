@@ -1,14 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:get/route_manager.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:network_image_mock/network_image_mock.dart';
-
 import 'package:clean_flutter/ui/helpers/helpers.dart';
 import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:clean_flutter/ui/pages/survey_result/components/components.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:network_image_mock/network_image_mock.dart';
 
 import '../helpers/helpers.dart';
 

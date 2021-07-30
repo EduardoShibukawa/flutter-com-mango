@@ -1,14 +1,16 @@
-import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:faker/faker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_flutter/ui/pages/pages.dart';
 import 'package:clean_flutter/domain/entities/survey_entity.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:clean_flutter/presentation/presenters/presenters.dart';
 import 'package:clean_flutter/ui/helpers/helpers.dart';
+
+import '../../mocks/mocks.dart';
 
 class LoadSurveysSpy extends Mock implements LoadSurveys {}
 
@@ -16,21 +18,6 @@ void main() {
   late LoadSurveysSpy loadSurveys;
   late GetxSurveysPresenter sut;
   late List<SurveyEntity> surveys;
-
-  List<SurveyEntity> mockValidData() => [
-        SurveyEntity(
-          id: faker.guid.guid(),
-          question: faker.lorem.sentence(),
-          dateTime: DateTime(2020, 2, 20),
-          didAnswer: true,
-        ),
-        SurveyEntity(
-          id: faker.guid.guid(),
-          question: faker.lorem.sentence(),
-          dateTime: DateTime(2018, 10, 3),
-          didAnswer: false,
-        ),
-      ];
 
   When mockLoadSurveysCall() => when(() => loadSurveys.load());
 
@@ -49,7 +36,7 @@ void main() {
   setUp(() {
     loadSurveys = LoadSurveysSpy();
     sut = GetxSurveysPresenter(loadSurveys: loadSurveys);
-    mockLoadSurveys(mockValidData());
+    mockLoadSurveys(FakeSurveysFactory.makeEntities());
   });
 
   test('Should call LoadSurveys on loadData', () async {
@@ -62,13 +49,13 @@ void main() {
           SurveyViewModel(
             id: surveys[0].id,
             question: surveys[0].question,
-            date: '20 fev 2020',
+            date: '02 fev 2020',
             didAnswer: surveys[0].didAnswer,
           ),
           SurveyViewModel(
             id: surveys[1].id,
             question: surveys[1].question,
-            date: '03 out 2018',
+            date: '20 dez 2018',
             didAnswer: surveys[1].didAnswer,
           ),
         ])));

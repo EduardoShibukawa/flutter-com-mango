@@ -6,33 +6,23 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import '../../../mocks/mocks.dart';
+
 class CacheStorageSpy extends Mock implements CacheStorage {}
 
 void main() {
   group('Load', () {
     late CacheStorage cacheStorage;
     late LocalLoadSurveys sut;
-    late List<Map<String, String>> data;
-
-    List<Map<String, String>> mockValidData() => [
-          {
-            'id': faker.guid.guid(),
-            'question': faker.randomGenerator.string(10),
-            'date': '2020-07-20T00:00:00Z',
-            'didAnswer': 'false'
-          },
-          {
-            'id': faker.guid.guid(),
-            'question': faker.randomGenerator.string(10),
-            'date': '2019-02-02T00:00:00Z',
-            'didAnswer': 'true'
-          }
-        ];
+    late List<Map<String, String>>? cacheData;
 
     When mockFetchCall() => when(() => cacheStorage.fetch('surveys'));
 
-    void mockFetch(List<Map<String, String>>? data) =>
-        mockFetchCall().thenAnswer((_) async => data);
+    void mockFetch(List<Map<String, String>>? data) {
+      cacheData = data;
+
+      mockFetchCall().thenAnswer((_) async => data);
+    }
 
     void mockFetchError() => mockFetchCall().thenThrow(Exception());
 
@@ -40,8 +30,7 @@ void main() {
       cacheStorage = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorage);
 
-      data = mockValidData();
-      mockFetch(data);
+      mockFetch(FakeSurveysFactory.makeCacheJson());
     });
     test('Should call FectchCacheStorage with correct key', () async {
       await sut.load();
@@ -50,20 +39,20 @@ void main() {
     });
 
     test('Should return a list of surveys on success', () async {
-      mockFetch(data);
+      mockFetch(cacheData);
 
       final surveys = await sut.load();
 
       expect(surveys, [
         SurveyEntity(
-          id: data[0]['id']!,
-          question: data[0]['question']!,
+          id: cacheData![0]['id']!,
+          question: cacheData![0]['question']!,
           dateTime: DateTime.utc(2020, 7, 20),
           didAnswer: false,
         ),
         SurveyEntity(
-          id: data[1]['id']!,
-          question: data[1]['question']!,
+          id: cacheData![1]['id']!,
+          question: cacheData![1]['question']!,
           dateTime: DateTime.utc(2019, 2, 2),
           didAnswer: true,
         )
@@ -86,14 +75,7 @@ void main() {
     });
 
     test('Should throw UnexpectedError if cache is invalid', () async {
-      mockFetch([
-        {
-          'id': faker.guid.guid(),
-          'question': faker.randomGenerator.string(10),
-          'date': 'invalid_date',
-          'didAnswer': 'false'
-        }
-      ]);
+      mockFetch(FakeSurveysFactory.makeInvalidCacheJson());
 
       final future = sut.load();
 
@@ -101,12 +83,7 @@ void main() {
     });
 
     test('Should throw UnexpectedError if cache is incomplete', () async {
-      mockFetch([
-        {
-          'id': faker.guid.guid(),
-          'question': faker.randomGenerator.string(10),
-        }
-      ]);
+      mockFetch(FakeSurveysFactory.makeIncompleteCacheJson());
 
       final future = sut.load();
 
@@ -125,27 +102,14 @@ void main() {
   group('Validate', () {
     late CacheStorage cacheStorage;
     late LocalLoadSurveys sut;
-    late List<Map<String, String>> data;
-
-    List<Map<String, String>> mockValidData() => [
-          {
-            'id': faker.guid.guid(),
-            'question': faker.randomGenerator.string(10),
-            'date': '2020-07-20T00:00:00Z',
-            'didAnswer': 'false'
-          },
-          {
-            'id': faker.guid.guid(),
-            'question': faker.randomGenerator.string(10),
-            'date': '2019-02-02T00:00:00Z',
-            'didAnswer': 'true'
-          }
-        ];
+    late List<Map<String, String>>? cacheData;
 
     When mockFetchCall() => when(() => cacheStorage.fetch('surveys'));
 
-    void mockFetch(List<Map<String, String>>? data) =>
-        mockFetchCall().thenAnswer((_) async => data);
+    void mockFetch(List<Map<String, String>>? data) {
+      cacheData = data;
+      mockFetchCall().thenAnswer((_) async => data);
+    }
 
     void mockFetchError() => mockFetchCall().thenThrow(Exception());
 
@@ -157,8 +121,7 @@ void main() {
       cacheStorage = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorage);
 
-      data = mockValidData();
-      mockFetch(data);
+      mockFetch(FakeSurveysFactory.makeCacheJson());
       mockDelete();
     });
     test('Should call FectchCacheStorage with correct key', () async {
@@ -168,14 +131,7 @@ void main() {
     });
 
     test('Should delete cache if it is invalid', () async {
-      mockFetch([
-        {
-          'id': faker.guid.guid(),
-          'question': faker.randomGenerator.string(10),
-          'date': 'invalid_date',
-          'didAnswer': 'false'
-        }
-      ]);
+      mockFetch(FakeSurveysFactory.makeInvalidCacheJson());
 
       await sut.validate();
 
@@ -183,12 +139,7 @@ void main() {
     });
 
     test('Should delete cache if it is incomplete', () async {
-      mockFetch([
-        {
-          'id': faker.guid.guid(),
-          'question': faker.randomGenerator.string(10),
-        }
-      ]);
+      mockFetch(FakeSurveysFactory.makeIncompleteCacheJson());
 
       final future = sut.load();
 
@@ -209,21 +160,6 @@ void main() {
     late LocalLoadSurveys sut;
     late List<SurveyEntity> surveys;
 
-    List<SurveyEntity> mockSurveys() => [
-          SurveyEntity(
-            id: faker.guid.guid(),
-            question: faker.randomGenerator.string(10),
-            dateTime: DateTime.utc(2020, 2, 2),
-            didAnswer: true,
-          ),
-          SurveyEntity(
-            id: faker.guid.guid(),
-            question: faker.randomGenerator.string(10),
-            dateTime: DateTime.utc(2018, 12, 20),
-            didAnswer: false,
-          ),
-        ];
-
     When mockSaveCall() => when(
         () => cacheStorage.save(key: 'surveys', value: any(named: 'value')));
 
@@ -232,7 +168,7 @@ void main() {
     setUp(() {
       cacheStorage = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorage);
-      surveys = mockSurveys();
+      surveys = FakeSurveysFactory.makeEntities();
 
       when(() => cacheStorage.save(key: 'surveys', value: any(named: 'value')))
           .thenAnswer((_) async => {});

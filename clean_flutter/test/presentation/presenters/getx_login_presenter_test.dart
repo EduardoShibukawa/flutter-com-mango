@@ -3,25 +3,19 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter/domain/helpers/helpers.dart';
-
 import 'package:clean_flutter/domain/entities/entities.dart';
-
 import 'package:clean_flutter/domain/usecases/usecases.dart';
-
 import 'package:clean_flutter/presentation/presenters/presenters.dart';
-
 import 'package:clean_flutter/ui/helpers/errors/ui_error.dart';
 import 'package:clean_flutter/ui/pages/pages.dart';
+
+import '../../mocks/mocks.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
 class AuthenticationSpy extends Mock implements Authentication {}
 
-class FakeAuthenticationParams extends Fake implements AuthenticationParams {}
-
 class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
-
-class FakeAccount extends Fake implements AccountEntity {}
 
 void main() {
   late LoginPresenter sut;
@@ -31,11 +25,11 @@ void main() {
 
   late String email;
   late String password;
-  late String token;
+  late AccountEntity account;
 
   setUpAll(() {
     registerFallbackValue(FakeAuthenticationParams());
-    registerFallbackValue(FakeAccount());
+    registerFallbackValue(FakeAccountEntity());
   });
 
   When mockValidationCall({String? field}) => when(() => validation.validate(
@@ -50,8 +44,9 @@ void main() {
   When mockAuthenticationCall() =>
       when(() => authentication.auth(params: any(named: 'params')));
 
-  void mockAuthentication() {
-    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(token));
+  void mockAuthentication(AccountEntity data) {
+    account = data;
+    mockAuthenticationCall().thenAnswer((_) async => data);
   }
 
   void mockAuthenticationError(DomainError error) {
@@ -78,9 +73,8 @@ void main() {
     );
     email = faker.internet.email();
     password = faker.internet.password();
-    token = faker.guid.guid();
     mockValidation();
-    mockAuthentication();
+    mockAuthentication(FakeAccountFactory.makeEntity());
     mockSaveCurrentAccount();
   });
 
@@ -253,9 +247,7 @@ void main() {
 
     await sut.auth();
 
-    verify(
-      () => saveCurrentACcount.save(AccountEntity(token)),
-    ).called(1);
+    verify(() => saveCurrentACcount.save(account)).called(1);
   });
 
   test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {

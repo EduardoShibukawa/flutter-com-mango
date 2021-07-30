@@ -17,7 +17,7 @@ extension SurveyAnswerEntityExtensions on SurveyAnswerEntity {
       image: image,
       answer: answer,
       isCurrentAnswer: isCurrentAnswer,
-      percent: '${percent}%',
+      percent: '$percent%',
     );
   }
 }

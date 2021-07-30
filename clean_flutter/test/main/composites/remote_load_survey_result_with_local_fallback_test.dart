@@ -7,12 +7,12 @@ import 'package:clean_flutter/domain/entities/entities.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/main/composites/composites.dart';
 
+import '../../mocks/mocks.dart';
+
 class RemoteLoadSurveyResultSpy extends Mock implements RemoteLoadSurveyResult {
 }
 
 class LocalLoadSurveyResultSpy extends Mock implements LocalLoadSurveyResult {}
-
-class FakeSurveyResultEntity extends Fake implements SurveyResultEntity {}
 
 void main() {
   late RemoteLoadSurveyResultSpy remote;
@@ -26,25 +26,11 @@ void main() {
     registerFallbackValue(FakeSurveyResultEntity());
   });
 
-  SurveyResultEntity mockSurveyResult() {
-    return SurveyResultEntity(
-      surveyId: surveyId,
-      question: faker.lorem.sentence(),
-      answers: [
-        SurveyAnswerEntity(
-          answer: faker.lorem.sentence(),
-          isCurrentAnswer: faker.randomGenerator.boolean(),
-          percent: faker.randomGenerator.integer(100),
-        )
-      ],
-    );
-  }
-
   When mockRemoteLoadCall() =>
       when(() => remote.loadBySurvey(surveyId: any(named: "surveyId")));
 
   void mockRemoteLoad() {
-    remoteResult = mockSurveyResult();
+    remoteResult = FakeSurveyResultFactory.makeEntity();
     mockRemoteLoadCall().thenAnswer((_) async => remoteResult);
   }
 
@@ -55,7 +41,7 @@ void main() {
       when(() => local.loadBySurvey(surveyId: any(named: "surveyId")));
 
   void mockLocalLoad() {
-    localResult = mockSurveyResult();
+    localResult = FakeSurveyResultFactory.makeEntity();
     mockLocalLoadCall().thenAnswer((_) async => localResult);
   }
 

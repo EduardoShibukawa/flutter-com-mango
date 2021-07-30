@@ -7,6 +7,8 @@ import 'package:clean_flutter/data/usecase/usecase.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:clean_flutter/domain/helpers/domain_error.dart';
 
+import '../../../mocks/mocks.dart';
+
 class MockHttpClient extends Mock implements HttpClient {}
 
 void main() {
@@ -14,11 +16,7 @@ void main() {
   late HttpClient httpClient;
   late String url;
   late AuthenticationParams params;
-
-  Map mockValidData() => {
-        'accessToken': faker.guid.guid(),
-        'name': faker.person.name(),
-      };
+  late Map apiResult;
 
   When mockRequest() => when(() => httpClient.request(
         url: any(named: 'url'),
@@ -27,6 +25,7 @@ void main() {
       ));
 
   void mockHttpData(Map data) {
+    apiResult = data;
     mockRequest().thenAnswer((_) async => data);
   }
 
@@ -39,11 +38,8 @@ void main() {
     httpClient = MockHttpClient();
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
-    params = AuthenticationParams(
-      email: faker.internet.email(),
-      secret: faker.internet.password(),
-    );
-    mockHttpData(mockValidData());
+    params = FakeParamsFactory.makeAuthentication();
+    mockHttpData(FakeAccountFactory.makeApiJson());
   });
 
   test('Should call HttpClient with correct values', () async {
@@ -102,20 +98,11 @@ void main() {
   });
 
   test('Should return an Account if HttpClient returns 200', () async {
-    // Arrange
-    final accessToken = faker.guid.guid();
-    final name = faker.person.name();
-
-    mockHttpData({
-      'accessToken': accessToken,
-      'name': name,
-    });
-
     // Act
     final account = await sut.auth(params: params);
 
     // Assert
-    expect(account.token, accessToken);
+    expect(account.token, apiResult['accessToken']);
   });
 
   test(

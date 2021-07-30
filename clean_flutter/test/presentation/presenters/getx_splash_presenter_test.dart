@@ -1,12 +1,11 @@
-import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter/presentation/presenters/presenters.dart';
-
 import 'package:clean_flutter/domain/entities/entities.dart';
-
 import 'package:clean_flutter/domain/usecases/usecases.dart';
+
+import '../../mocks/fake_account_factory.dart';
 
 class LoadCurrentAccountSpy extends Mock implements LoadCurrentAccount {}
 
@@ -26,7 +25,7 @@ void main() {
     loadCurrentAccount = LoadCurrentAccountSpy();
     sut = GetxSplashPresenter(loadCurrentAccount: loadCurrentAccount);
 
-    mockLoadCurrentAccount(account: AccountEntity(faker.guid.guid()));
+    mockLoadCurrentAccount(account: FakeAccountFactory.makeEntity());
   });
 
   test('Should call LoadCurrentAccount', () async {
@@ -54,7 +53,8 @@ void main() {
   });
 
   test('Should go to login page on empty token result', () async {
-    mockLoadCurrentAccount(account: AccountEntity(''));
+    mockLoadCurrentAccount(
+        account: FakeAccountFactory.makeEntityWithoutToken());
 
     sut.navigateToStream.listen(expectAsync1(
       (page) => expect(page, '/login'),

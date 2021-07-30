@@ -6,10 +6,11 @@ import 'package:test/test.dart';
 import 'package:clean_flutter/domain/entities/entities.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
-import 'package:clean_flutter/presentation/presenters/presenters.dart';
 import 'package:clean_flutter/presentation/helpers/helpers.dart';
+import 'package:clean_flutter/presentation/presenters/presenters.dart';
 import 'package:clean_flutter/ui/helpers/helpers.dart';
-import 'package:clean_flutter/ui/pages/pages.dart';
+
+import '../../mocks/mocks.dart';
 
 class LoadSurveyResultSpy extends Mock implements LoadSurveyResult {}
 
@@ -21,23 +22,6 @@ void main() {
   late GetxSurveyResultPresenter sut;
   late SurveyResultEntity surveyResult;
   late String surveyId;
-
-  SurveyResultEntity mockValidData() => SurveyResultEntity(
-          surveyId: faker.guid.guid(),
-          question: faker.lorem.sentence(),
-          answers: [
-            SurveyAnswerEntity(
-              image: faker.internet.httpUrl(),
-              answer: faker.lorem.sentence(),
-              isCurrentAnswer: faker.randomGenerator.boolean(),
-              percent: faker.randomGenerator.integer(100),
-            ),
-            SurveyAnswerEntity(
-              answer: faker.lorem.sentence(),
-              isCurrentAnswer: faker.randomGenerator.boolean(),
-              percent: faker.randomGenerator.integer(100),
-            ),
-          ]);
 
   When mockLoadSurveyResultCall() =>
       when(() => loadSurveyResult.loadBySurvey(surveyId: surveyId));
@@ -63,7 +47,7 @@ void main() {
       loadSurveyResult: loadSurveyResult,
       surveyId: surveyId,
     );
-    mockLoadSurveyResult(mockValidData());
+    mockLoadSurveyResult(FakeSurveyResultFactory.makeEntity());
   });
 
   group('When loadData is called', () {
@@ -116,7 +100,7 @@ void main() {
 
     setUp(() {
       answer = faker.lorem.sentence();
-      mockSaveSurveyResult(mockValidData());
+      mockSaveSurveyResult(FakeSurveyResultFactory.makeEntity());
     });
     test('Should call LoadSurveys', () async {
       await sut.save(answer: answer);
