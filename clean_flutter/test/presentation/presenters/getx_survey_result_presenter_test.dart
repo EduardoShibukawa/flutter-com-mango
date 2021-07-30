@@ -4,6 +4,7 @@ import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:clean_flutter/presentation/presenters/presenters.dart';
 import 'package:clean_flutter/ui/helpers/helpers.dart';
 import 'package:clean_flutter/ui/pages/pages.dart';
+import 'package:clean_flutter/ui/pages/survey_result/components/survey_result.dart';
 import 'package:faker/faker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mocktail/mocktail.dart';
@@ -116,21 +117,48 @@ void main() {
 
   group('When save is called', () {
     late String answer;
+    late SurveyResultEntity saveResult;
+
+    When mockSaveSurveyResultCall() =>
+        when(() => saveSurveyResult.save(answer: any(named: 'answer')));
+
+    void mockSaveSurveyResult(SurveyResultEntity data) {
+      saveResult = data;
+      mockSaveSurveyResultCall().thenAnswer((_) async => data);
+    }
 
     setUp(() {
       answer = faker.lorem.sentence();
-
-      when(() => saveSurveyResult.save(answer: any(named: 'answer')))
-          .thenAnswer((_) async => SurveyResultEntity(
-                surveyId: faker.guid.guid(),
-                question: faker.lorem.sentence(),
-                answers: [],
-              ));
+      mockSaveSurveyResult(mockValidData());
     });
     test('Should call LoadSurveys', () async {
       await sut.save(answer: answer);
 
       verify(() => saveSurveyResult.save(answer: answer)).called(1);
+    });
+
+    test('Should emit correct events on success', () async {
+      sut.surveyResultStream.listen(expectAsync1((s) => expect(
+          s,
+          SurveyResultViewModel(
+            surveyId: saveResult.surveyId,
+            question: saveResult.question,
+            answers: [
+              SurveyAnswerViewModel(
+                image: saveResult.answers[0].image,
+                answer: saveResult.answers[0].answer,
+                isCurrentAnswer: saveResult.answers[0].isCurrentAnswer,
+                percent: '${saveResult.answers[0].percent}%',
+              ),
+              SurveyAnswerViewModel(
+                answer: saveResult.answers[1].answer,
+                isCurrentAnswer: saveResult.answers[1].isCurrentAnswer,
+                percent: '${saveResult.answers[1].percent}%',
+              )
+            ],
+          ))));
+
+      await sut.save(answer: answer);
     });
   });
 }
