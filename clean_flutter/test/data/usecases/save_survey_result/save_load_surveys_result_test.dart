@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:clean_flutter/data/http/http.dart';
 import 'package:clean_flutter/data/usecase/usecase.dart';
+import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -22,6 +21,8 @@ void main() {
 
   void mockHttpData() => mockRequestCall().thenAnswer((_) async => {});
 
+  void mockHttpError(HttpError error) => mockRequestCall().thenThrow(error);
+
   setUp(() {
     url = faker.internet.httpUrl();
     httpClient = HttpClientSpy();
@@ -36,5 +37,29 @@ void main() {
 
     verify(() =>
         httpClient.request(url: url, method: 'put', body: {'answer': answer}));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 404', () async {
+    mockHttpError(HttpError.notFound);
+
+    final future = sut.save(answer: answer);
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 500', () async {
+    mockHttpError(HttpError.serverError);
+
+    final future = sut.save(answer: answer);
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw AccessDeniedError if HttpClient returns 403', () async {
+    mockHttpError(HttpError.forbidden);
+
+    final future = sut.save(answer: answer);
+
+    expect(future, throwsA(DomainError.accessDenied));
   });
 }
