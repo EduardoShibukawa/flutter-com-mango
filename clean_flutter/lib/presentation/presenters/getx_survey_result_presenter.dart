@@ -6,6 +6,7 @@ import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/helpers.dart';
 import '../../ui/pages/pages.dart';
 import '../mixins/mixins.dart';
+import '../helpers/helpers.dart';
 
 class GetxSurveyResultPresenter extends GetxController
     with SessionManager
@@ -38,18 +39,7 @@ class GetxSurveyResultPresenter extends GetxController
     try {
       final surveyResult = await action();
 
-      _surveyResult.value = SurveyResultViewModel(
-        surveyId: surveyResult.surveyId,
-        question: surveyResult.question,
-        answers: surveyResult.answers
-            .map((a) => SurveyAnswerViewModel(
-                  image: a.image,
-                  answer: a.answer,
-                  isCurrentAnswer: a.isCurrentAnswer,
-                  percent: '${a.percent}%',
-                ))
-            .toList(),
-      );
+      _surveyResult.value = surveyResult.toViewModel();
     } on DomainError catch (error) {
       if (error == DomainError.accessDenied)
         isSessionExpired = true;

@@ -73,7 +73,7 @@ void main() {
                 percent: 40,
               ),
               SurveyAnswerEntity(
-                answer: data['answers'][0]['answer'],
+                answer: data['answers'][1]['answer'],
                 isCurrentAnswer: false,
                 percent: 60,
               ),

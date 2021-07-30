@@ -7,6 +7,7 @@ import 'package:clean_flutter/domain/entities/entities.dart';
 import 'package:clean_flutter/domain/helpers/helpers.dart';
 import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:clean_flutter/presentation/presenters/presenters.dart';
+import 'package:clean_flutter/presentation/helpers/helpers.dart';
 import 'package:clean_flutter/ui/helpers/helpers.dart';
 import 'package:clean_flutter/ui/pages/pages.dart';
 
@@ -72,25 +73,8 @@ void main() {
       verify(() => loadSurveyResult.loadBySurvey(surveyId: surveyId)).called(1);
     });
     test('Should emit correct events on success', () async {
-      sut.surveyResultStream.listen(expectAsync1((s) => expect(
-          s,
-          SurveyResultViewModel(
-            surveyId: surveyResult.surveyId,
-            question: surveyResult.question,
-            answers: [
-              SurveyAnswerViewModel(
-                image: surveyResult.answers[0].image,
-                answer: surveyResult.answers[0].answer,
-                isCurrentAnswer: surveyResult.answers[0].isCurrentAnswer,
-                percent: '${surveyResult.answers[0].percent}%',
-              ),
-              SurveyAnswerViewModel(
-                answer: surveyResult.answers[1].answer,
-                isCurrentAnswer: surveyResult.answers[1].isCurrentAnswer,
-                percent: '${surveyResult.answers[1].percent}%',
-              )
-            ],
-          ))));
+      sut.surveyResultStream
+          .listen(expectAsync1((s) => expect(s, surveyResult.toViewModel())));
 
       await sut.loadData();
     });
@@ -141,26 +125,9 @@ void main() {
     });
 
     test('Should emit correct events on success', () async {
-      sut.surveyResultStream.listen(expectAsync1((s) => expect(
-          s,
-          SurveyResultViewModel(
-            surveyId: saveResult.surveyId,
-            question: saveResult.question,
-            answers: [
-              SurveyAnswerViewModel(
-                image: saveResult.answers[0].image,
-                answer: saveResult.answers[0].answer,
-                isCurrentAnswer: saveResult.answers[0].isCurrentAnswer,
-                percent: '${saveResult.answers[0].percent}%',
-              ),
-              SurveyAnswerViewModel(
-                answer: saveResult.answers[1].answer,
-                isCurrentAnswer: saveResult.answers[1].isCurrentAnswer,
-                percent: '${saveResult.answers[1].percent}%',
-              )
-            ],
-          ))));
-
+      expectLater(sut.surveyResultStream,
+          emitsInOrder([surveyResult.toViewModel(), saveResult.toViewModel()]));
+      await sut.loadData();
       await sut.save(answer: answer);
     });
 
@@ -172,6 +139,7 @@ void main() {
             (error) => expect(error, UIError.unexpected.description),
           ));
 
+      await sut.loadData();
       await sut.save(answer: answer);
     });
 
