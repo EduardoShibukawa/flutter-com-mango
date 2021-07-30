@@ -1,13 +1,14 @@
 import 'dart:async';
 
-import 'package:clean_flutter/ui/helpers/helpers.dart';
-import 'package:clean_flutter/ui/pages/pages.dart';
-import 'package:clean_flutter/ui/pages/survey_result/components/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/route_manager.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:network_image_mock/network_image_mock.dart';
+
+import 'package:clean_flutter/ui/helpers/helpers.dart';
+import 'package:clean_flutter/ui/pages/pages.dart';
+import 'package:clean_flutter/ui/pages/survey_result/components/components.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
@@ -64,6 +65,8 @@ void main() {
     mockStreams();
 
     when(() => presenter.loadData()).thenAnswer((_) async => {});
+    when(() => presenter.save(answer: any(named: 'answer')))
+        .thenAnswer((_) async => {});
 
     final surveysPage = GetMaterialApp(
       initialRoute: '/survey_result/any_survey_id',
@@ -160,5 +163,17 @@ void main() {
     await tester.pump();
 
     expect(Get.currentRoute, '/survey_result/any_survey_id');
+  });
+
+  testWidgets('Should call save on list item click',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveyResultController.add(makeSurveyResult());
+    await mockPump(tester);
+
+    await tester.tap(find.text('Answer 1'));
+
+    verify(() => presenter.save(answer: 'Answer 1')).called(1);
   });
 }

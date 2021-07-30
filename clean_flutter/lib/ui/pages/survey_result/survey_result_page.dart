@@ -1,8 +1,8 @@
-import 'package:clean_flutter/ui/mixins/mixins.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/components.dart';
 import '../../helpers/helpers.dart';
+import '../../mixins/mixins.dart';
 import '../pages.dart';
 import 'components/components.dart';
 
@@ -30,7 +30,10 @@ class SurveyResultPage extends StatelessWidget with SessionManager {
                     reload: presenter.loadData,
                   );
                 } else if (snapshot.hasData) {
-                  return SurveyResult(snapshot.data!);
+                  return SurveyResult(
+                    viewModel: snapshot.data!,
+                    onSave: presenter.save,
+                  );
                 }
 
                 return Center(child: CircularProgressIndicator());

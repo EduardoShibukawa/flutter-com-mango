@@ -47,4 +47,9 @@ class GetxSurveyResultPresenter extends GetxController
             UIError.unexpected.description, StackTrace.current);
     }
   }
+
+  Future<void> save({required String answer}) async {
+    // TODO: implement save
+    throw UnimplementedError();
+  }
 }
