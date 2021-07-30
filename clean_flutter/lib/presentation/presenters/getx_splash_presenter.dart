@@ -5,7 +5,7 @@ import '../../ui/pages/pages.dart';
 import '../mixins/mixins.dart';
 
 class GetxSplashPresenter extends GetxController
-    with NavigateManager
+    with NavigatorManager
     implements SplashPresenter {
   final LoadCurrentAccount loadCurrentAccount;
 

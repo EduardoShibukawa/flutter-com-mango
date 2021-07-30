@@ -11,7 +11,7 @@ import '../mixins/mixins.dart';
 import 'presenters.dart';
 
 class GetxSignUpPresenter extends GetxController
-    with LoadingManager, NavigateManager, FormManager, UIErrorManager
+    with LoadingManager, NavigatorManager, FormManager, UIErrorManager
     implements SignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
