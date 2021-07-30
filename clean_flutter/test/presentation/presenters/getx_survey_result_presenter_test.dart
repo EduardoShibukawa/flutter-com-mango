@@ -4,7 +4,6 @@ import 'package:clean_flutter/domain/usecases/usecases.dart';
 import 'package:clean_flutter/presentation/presenters/presenters.dart';
 import 'package:clean_flutter/ui/helpers/helpers.dart';
 import 'package:clean_flutter/ui/pages/pages.dart';
-import 'package:clean_flutter/ui/pages/survey_result/components/survey_result.dart';
 import 'package:faker/faker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mocktail/mocktail.dart';
@@ -127,6 +126,9 @@ void main() {
       mockSaveSurveyResultCall().thenAnswer((_) async => data);
     }
 
+    void mockSaveSurveyResultError(DomainError error) =>
+        mockSaveSurveyResultCall().thenThrow(error);
+
     setUp(() {
       answer = faker.lorem.sentence();
       mockSaveSurveyResult(mockValidData());
@@ -157,6 +159,25 @@ void main() {
               )
             ],
           ))));
+
+      await sut.save(answer: answer);
+    });
+
+    test('Should emit correct events on failure', () async {
+      mockSaveSurveyResultError(DomainError.unexpected);
+
+      sut.surveyResultStream.listen(null,
+          onError: expectAsync1(
+            (error) => expect(error, UIError.unexpected.description),
+          ));
+
+      await sut.save(answer: answer);
+    });
+
+    test('Should emit correct events on access denied', () async {
+      mockSaveSurveyResultError(DomainError.accessDenied);
+
+      expectLater(sut.isSessionExpiredStream, emits(true));
 
       await sut.save(answer: answer);
     });
